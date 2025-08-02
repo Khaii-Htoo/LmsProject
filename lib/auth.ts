@@ -4,15 +4,14 @@ import { prisma } from "./db";
 
 import { emailOTP } from "better-auth/plugins";
 import { resend } from "./resend";
-import { env } from "./env";
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "sqlite"
   }),
   socialProviders: {
     github: {
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
   plugins: [
