@@ -7,6 +7,8 @@ import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { MagicCard } from "@/components/magicui/magic-card";
+import { featureKeyData } from "@/demoData";
+import { useTheme } from "next-themes";
 
 // Re-define FeatureCard here if it's only used in page.tsx
 interface FeatureCardProps {
@@ -15,34 +17,13 @@ interface FeatureCardProps {
   icon: React.ReactNode;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({
-  title,
-  description,
-  icon,
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="p-6 border border-border/30 rounded-lg bg-card hover:bg-card/50 transition-all duration-300 ease-in-out flex flex-col items-center text-center"
-    >
-      <div className="mb-4 p-3 bg-muted/20 rounded-full inline-block">
-        {icon}
-      </div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </motion.div>
-  );
-};
-
 export default function HomePage() {
+  const { theme } = useTheme();
   return (
     <div className="bg-background text-foreground min-h-screen overflow-hidden">
       <Navbar /> {/* Render the Navbar component */}
       {/* Hero Section */}
-      <section className="container mx-auto flex flex-col items-center justify-center min-h-[calc(80vh-80px)] py-16 px-4 md:px-8">
+      <section className="container  mx-auto flex flex-col items-center justify-center min-h-[calc(80vh-80px)] py-16 px-4 md:px-8">
         <div className="text-center">
           {/* Animated Gradient Border Tag */}
           <motion.div
@@ -121,99 +102,30 @@ export default function HomePage() {
             Key Features
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <MagicCard>
-              <FeatureCard
-                title="Comprehensive Courses"
-                description="Access a vast library of courses covering diverse subjects."
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-blue-500"
-                  >
-                    <path d="M2 3h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H2zm8 10h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H10zm0-10h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H10z"></path>
-                  </svg>
-                }
-              />
-            </MagicCard>
-            <MagicCard>
-              <FeatureCard
-                title="Interactive Learning"
-                description="Engage with dynamic content and hands-on exercises."
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-green-500"
-                  >
-                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                    <path d="M12 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-                    <path d="M20.74 10.12a11.93 11.93 0 0 0-3.53-3.53"></path>
-                  </svg>
-                }
-              />
-            </MagicCard>
-
-            <MagicCard>
-              <FeatureCard
-                title="Progress Tracking"
-                description="Monitor your learning journey with detailed analytics."
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-yellow-500"
-                  >
-                    <path d="M12 1v10.5a2.5 2.5 0 0 0 5 0V2a9 9 0 1 1-9 9h10.5"></path>
-                  </svg>
-                }
-              />
-            </MagicCard>
-            <MagicCard>
-              <FeatureCard
-                title="Community Support"
-                description="Connect with peers and instructors for collaborative learning."
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-purple-500"
-                  >
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 20v-3a2 2 0 0 0-2-2h-2"></path>
-                  </svg>
-                }
-              />
-            </MagicCard>
+            {featureKeyData.map((data, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+              >
+                <MagicCard
+                  key={index}
+                  className=" p-7 rounded-lg"
+                  gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+                >
+                  <div className="mb-4 p-3rounded-full inline-block">
+                    {data.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">
+                    {data.title}
+                  </h3>
+                  <p className="text-muted-foreground text-center">
+                    {data.description}
+                  </p>
+                </MagicCard>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

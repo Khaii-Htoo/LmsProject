@@ -1,7 +1,7 @@
 // components/Navbar.tsx (No changes needed here from the previous version)
 "use client";
 
-import React, { useTransition } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,22 +12,11 @@ import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Loader } from "lucide-react";
+import UserDropdown from "./user-dropdown";
 
 const Navbar: React.FC = () => {
   const { data: session } = authClient.useSession();
-  const [logoutPending, startLogoutTransition] = useTransition();
-  const handleLogout = async () => {
-    startLogoutTransition(async () => {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success("Successfully Logout!");
-            redirect("/login");
-          },
-        },
-      });
-    });
-  };
+
   return (
     <>
       <motion.nav
@@ -109,15 +98,7 @@ const Navbar: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               >
-                {session ? (
-                  <Button onClick={handleLogout} variant={"outline"}>
-                    {logoutPending ? (
-                      <Loader size={4} className=" animate-spin" />
-                    ) : (
-                      "Logout"
-                    )}
-                  </Button>
-                ) : (
+                {!session && (
                   <Link href={"/login"}>
                     <Button
                       variant="ghost"
@@ -128,27 +109,20 @@ const Navbar: React.FC = () => {
                   </Link>
                 )}
               </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              >
-                {session ? (
-                  <Avatar>
-                    <AvatarImage
-                      width={35}
-                      className=" rounded-full"
-                      src={session.user.image!}
-                    />
-                    <AvatarFallback>{session.user.name}</AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <Link href={"/login"}>
-                    <Button className="bg-primary hover:bg-primary/90">
-                      Get Started
-                    </Button>
-                  </Link>
-                )}
-              </motion.div>
+
+              {session ? (
+                <UserDropdown
+                  email={session.user.email}
+                  image={session.user.image!}
+                  name={session.user.name}
+                />
+              ) : (
+                <Link href={"/login"}>
+                  <Button className="bg-primary hover:bg-primary/90">
+                    Get Started
+                  </Button>
+                </Link>
+              )}
             </div>
             {/* Mobile Hamburger Menu */}
             <MobileNav />
