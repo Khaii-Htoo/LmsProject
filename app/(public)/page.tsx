@@ -6,6 +6,7 @@ import Navbar from "./_components/nav-bar";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
+import { MagicCard } from "@/components/magicui/magic-card";
 
 // Re-define FeatureCard here if it's only used in page.tsx
 interface FeatureCardProps {
@@ -120,90 +121,99 @@ export default function HomePage() {
             Key Features
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FeatureCard
-              title="Comprehensive Courses"
-              description="Access a vast library of courses covering diverse subjects."
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-blue-500"
-                >
-                  <path d="M2 3h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H2zm8 10h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H10zm0-10h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H10z"></path>
-                </svg>
-              }
-            />
-            <FeatureCard
-              title="Interactive Learning"
-              description="Engage with dynamic content and hands-on exercises."
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-green-500"
-                >
-                  <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                  <path d="M12 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-                  <path d="M20.74 10.12a11.93 11.93 0 0 0-3.53-3.53"></path>
-                </svg>
-              }
-            />
-            <FeatureCard
-              title="Progress Tracking"
-              description="Monitor your learning journey with detailed analytics."
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-yellow-500"
-                >
-                  <path d="M12 1v10.5a2.5 2.5 0 0 0 5 0V2a9 9 0 1 1-9 9h10.5"></path>
-                </svg>
-              }
-            />
-            <FeatureCard
-              title="Community Support"
-              description="Connect with peers and instructors for collaborative learning."
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-purple-500"
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 20v-3a2 2 0 0 0-2-2h-2"></path>
-                </svg>
-              }
-            />
+            <MagicCard>
+              <FeatureCard
+                title="Comprehensive Courses"
+                description="Access a vast library of courses covering diverse subjects."
+                icon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-blue-500"
+                  >
+                    <path d="M2 3h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H2zm8 10h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H10zm0-10h6a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H10z"></path>
+                  </svg>
+                }
+              />
+            </MagicCard>
+            <MagicCard>
+              <FeatureCard
+                title="Interactive Learning"
+                description="Engage with dynamic content and hands-on exercises."
+                icon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-green-500"
+                  >
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <path d="M12 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                    <path d="M20.74 10.12a11.93 11.93 0 0 0-3.53-3.53"></path>
+                  </svg>
+                }
+              />
+            </MagicCard>
+
+            <MagicCard>
+              <FeatureCard
+                title="Progress Tracking"
+                description="Monitor your learning journey with detailed analytics."
+                icon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-yellow-500"
+                  >
+                    <path d="M12 1v10.5a2.5 2.5 0 0 0 5 0V2a9 9 0 1 1-9 9h10.5"></path>
+                  </svg>
+                }
+              />
+            </MagicCard>
+            <MagicCard>
+              <FeatureCard
+                title="Community Support"
+                description="Connect with peers and instructors for collaborative learning."
+                icon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-purple-500"
+                  >
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 20v-3a2 2 0 0 0-2-2h-2"></path>
+                  </svg>
+                }
+              />
+            </MagicCard>
           </div>
         </div>
       </section>
