@@ -11,9 +11,9 @@ const page = async () => {
   session && redirect("/");
 
   return (
-    <>
+    <div>
       <LoginForm />
-    </>
+    </div>
   );
 };
 

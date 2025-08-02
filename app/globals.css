@@ -41,6 +41,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-shiny-text: shiny-text 8s infinite;
+  @keyframes shiny-text {
+  0%, 90%, 100% {
+    background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+  30%, 60% {
+    background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
 }
 
 :root {
@@ -119,4 +128,64 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes subtleGradientBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-tag-border {
+  position: relative; /* Needed for pseudo-element positioning */
+  display: inline-block; /* Ensures it wraps content */
+  padding: 0.5rem; /* Padding to create space for the border */
+  border-radius: 9999px; /* Make it round */
+}
+
+.animate-tag-border::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Place it behind the text */
+  background: linear-gradient(
+    90deg,
+    #007cf0,
+    /* Tailwind blue-500 */ #4285f4,
+    /* Google Blue */ #db4437,
+    /* Google Red */ #f4b400,
+    /* Google Yellow */ #0f9d58,
+    /* Google Green */ #007cf0 /* Tailwind blue-500 - closing the loop */
+  );
+  background-size: 200% 200%; /* Crucial for animation */
+  animation: subtleGradientBorder 6s ease infinite; /* Adjust speed and easing */
+  border-radius: 9999px; /* Match outer radius */
+  /* Using mask-image for a more robust border cutout effect */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 50%,
+    black 50%
+  ); /* Creates the border effect */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 50%, black 50%);
+  mask-composite: exclude; /* Excludes the center part */
+  -webkit-mask-composite: source-out; /* For compatibility */
+}
+
+/* Ensure inner content is visible and background is applied correctly */
+.animate-tag-border > div {
+  position: relative; /* Ensure text is above the pseudo-element */
+  z-index: 1;
+  background-color: theme(
+    "colors.background"
+  ); /* Use your Tailwind background color */
+  border-radius: 9999px; /* Match outer radius */
 }
