@@ -3,7 +3,7 @@ import VerifyEmail from "./_components/verify-email";
 
 const page = () => {
   return (
-    <Suspense fallback="Loading...">
+    <Suspense fallback="Loading....">
       <VerifyEmail />
     </Suspense>
   );
