@@ -1,4 +1,3 @@
-// components/Navbar.tsx (No changes needed here from the previous version)
 "use client";
 
 import React from "react";
@@ -6,12 +5,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import MobileNav from "./mobile-nav"; // Make sure this points to the new file
+import MobileNav from "./mobile-nav";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
-import { redirect } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { Loader } from "lucide-react";
 import UserDropdown from "./user-dropdown";
 
 const Navbar: React.FC = () => {

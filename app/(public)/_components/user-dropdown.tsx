@@ -17,10 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTransition } from "react";
-import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
-import { toast } from "sonner";
+import { useSignout } from "@/hooks/use-signout";
 
 interface UserInfoType {
   image: string;
@@ -29,19 +26,7 @@ interface UserInfoType {
 }
 
 export default function UserDropdown({ name, image, email }: UserInfoType) {
-  const [logoutPending, startLogoutTransition] = useTransition();
-  const handleLogout = async () => {
-    startLogoutTransition(async () => {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success("Successfully Logout!");
-            redirect("/login");
-          },
-        },
-      });
-    });
-  };
+  const handleLogout = useSignout();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -81,11 +66,7 @@ export default function UserDropdown({ name, image, email }: UserInfoType) {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOutIcon size={16} className="opacity-60" aria-hidden="true" />
-          {logoutPending ? (
-            <Loader size={4} className=" animate-spin" />
-          ) : (
-            <span>Logout</span>
-          )}
+          <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
