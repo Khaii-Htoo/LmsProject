@@ -9,6 +9,7 @@ import { ArrowRightIcon } from "lucide-react";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { featureKeyData } from "@/demoData";
 import { useTheme } from "next-themes";
+import MessageIcons from "./_components/social-icon";
 
 // Re-define FeatureCard here if it's only used in page.tsx
 interface FeatureCardProps {
@@ -126,6 +127,7 @@ export default function HomePage() {
                 </MagicCard>
               </motion.div>
             ))}
+            <MessageIcons />
           </div>
         </div>
       </section>

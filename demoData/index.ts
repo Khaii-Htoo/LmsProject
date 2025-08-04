@@ -21,3 +21,13 @@ export const featureKeyData = [
     icon: "",
   },
 ];
+
+export const Categories = [
+  "4 Skill",
+  "Speaking & Listening",
+  "Writing & Reading",
+];
+
+export const levels = ["Begineer", "Intermediate", "Advanced"];
+
+export const status = ["Draft", "Published", "Archived"];

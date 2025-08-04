@@ -168,3 +168,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* globals.css */
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
