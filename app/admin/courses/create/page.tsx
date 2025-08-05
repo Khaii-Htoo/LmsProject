@@ -1,6 +1,6 @@
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronsLeft } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,8 +26,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Categories, levels, status } from "@/demoData";
+import Editor from "@/components/adminsidebar/rich-editor";
 
 const page = () => {
   const form = useForm<z.infer<typeof courseCreateSchema>>({
@@ -43,6 +43,10 @@ const page = () => {
       status: "",
     },
   });
+  const [content, setContent] = useState(form.getValues("description"));
+  useEffect(() => {
+    form.setValue("description", content);
+  }, [content, form]);
 
   function onSubmit(values: z.infer<typeof courseCreateSchema>) {
     console.log(values);
@@ -72,21 +76,6 @@ const page = () => {
                     <FormLabel className=" text-white">Title</FormLabel>
                     <FormControl>
                       <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* description */}
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -232,6 +221,26 @@ const page = () => {
                 )}
               />
 
+              {/* description */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <div className="w-full">
+                        <Editor value={content} onChange={setContent} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="mt-8 w-full p-4 rounded bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                <h2 className="text-lg font-semibold mb-2">Preview:</h2>
+                <div dangerouslySetInnerHTML={{ __html: content }} />
+              </div>
               <Button type="submit">Submit</Button>
             </form>
           </Form>
