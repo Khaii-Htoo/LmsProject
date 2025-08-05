@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { courseCreateSchema } from "@/lib/zod-schems";
-import z from "zod";
+import z, { file } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -28,6 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Categories, levels, status } from "@/demoData";
 import Editor from "@/components/adminsidebar/rich-editor";
+import { FileUpload } from "@/components/ui/file-upload";
 
 const page = () => {
   const form = useForm<z.infer<typeof courseCreateSchema>>({
@@ -67,21 +68,7 @@ const page = () => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {/* title */}
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className=" text-white">Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+              {/* file upload */}
               {/* thumbnail */}
               <FormField
                 control={form.control}
@@ -89,6 +76,23 @@ const page = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className=" text-white">Thumbnail Url</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        onChange={(files: File[]) => console.log(files)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* title */}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className=" text-white">Title</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
