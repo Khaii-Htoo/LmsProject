@@ -3,11 +3,11 @@
 import { useState } from "react";
 import {
   MessageCircle,
-  Instagram,
   Send,
   Facebook,
-  X,
-  Plus, // Placeholder for initial trigger icon
+  Plus,
+  MessageCircleIcon,
+  X, // Placeholder for initial trigger icon
 } from "lucide-react";
 import { IconBrandTiktok } from "@tabler/icons-react";
 
@@ -91,7 +91,11 @@ export default function MessageIcons() {
               className="relative group cursor-pointer"
             >
               <div className="w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-700 flex items-center justify-center text-white transform transition-all duration-300 ease-out group-hover:scale-110 shadow-lg">
-                <Plus className="w-6 h-6" />
+                {showCloseButton ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <MessageCircleIcon className="w-6 h-6" />
+                )}
               </div>
             </div>
           </div>
