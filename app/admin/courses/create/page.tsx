@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { courseCreateSchema } from "@/lib/zod-schems";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import slugify from "slugify";
+
 import {
   Select,
   SelectContent,
@@ -36,11 +36,10 @@ const page = () => {
       title: "",
       category: "",
       description: "",
-      duration: 0,
+      duration: "",
       fileKey: "",
       level: "",
-      price: 0,
-      slug: "",
+      price: "",
       status: "",
     },
   });
@@ -76,39 +75,6 @@ const page = () => {
                     </FormControl>
                     <FormMessage />
                   </FormItem>
-                )}
-              />
-              {/* slug */}
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <>
-                    <div className=" flex items-end space-x-1">
-                      <FormItem className=" flex-1">
-                        <FormLabel className=" text-white">Slug</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                      </FormItem>
-                      <Button
-                        type="button"
-                        className=" md:w-1/6"
-                        onClick={() => {
-                          form.setValue(
-                            "slug",
-                            slugify(form.getValues("title")),
-                            {
-                              shouldValidate: true,
-                            }
-                          );
-                        }}
-                      >
-                        ✨ Generate Slug
-                      </Button>
-                    </div>
-                    <FormMessage className=" -mt-5" />
-                  </>
                 )}
               />
 
@@ -249,7 +215,7 @@ const page = () => {
                       defaultValue={field.value}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder="Select a status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
