@@ -52,6 +52,7 @@ const page = () => {
   function onSubmit(values: z.infer<typeof courseCreateSchema>) {
     console.log(values);
   }
+
   return (
     <div>
       <div className=" flex items-center space-x-3 mb-5">
@@ -69,7 +70,6 @@ const page = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* file upload */}
-              {/* thumbnail */}
               <FormField
                 control={form.control}
                 name="fileKey"
@@ -77,9 +77,7 @@ const page = () => {
                   <FormItem>
                     <FormLabel className=" text-white">Thumbnail Url</FormLabel>
                     <FormControl>
-                      <FileUpload
-                        onChange={(files: File[]) => console.log(files)}
-                      />
+                      <FileUpload />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -26,3 +26,13 @@ export const courseCreateSchema = z.object({
   }),
   status: z.enum(courseStatus),
 });
+
+// s3 fileupload schema
+
+export const fileUploadSchema = z.object({
+  fileName: z.string().min(1, "File name is required"),
+  contentType: z.string().min(1, "Content type is required"),
+  size: z.number().positive("File size must be positive"),
+});
+
+export type FileUploadRequest = z.infer<typeof fileUploadSchema>;
