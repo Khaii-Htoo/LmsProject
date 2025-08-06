@@ -82,9 +82,8 @@ model Course{
   duration Int
   level String
   category String
-  subDescription String
    slug String @unique
-   status CourseStatus @default(Draft)
+   status String
    createdAt DateTime @default(now())
    updatedAt DateTime @updatedAt
    User User @relation(fields: [userId] , references: [id] , onDelete: Cascade)
@@ -92,9 +91,3 @@ model Course{
 }
 
 
-
-enum CourseStatus {
-  Draft
-  Published
-  Archived
-}

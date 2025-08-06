@@ -12,10 +12,10 @@ export const courseCreateSchema = z.object({
   fileKey: z.string().min(1, {
     message: "file is required",
   }),
-  price: z.string().min(1, {
+  price: z.number().min(1, {
     message: "Price is required",
   }),
-  duration: z.string().min(1, {
+  duration: z.number().min(1, {
     message: "Video duration is required",
   }),
   level: z.string().min(1, {

@@ -1,12 +1,12 @@
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
-import { ChevronsLeft } from "lucide-react";
+import React, { useEffect, useState, useTransition } from "react";
+import { ChevronsLeft, Loader } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { courseCreateSchema } from "@/lib/zod-schems";
-import z, { file } from "zod";
+import z, { file, success } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -29,19 +29,23 @@ import { Input } from "@/components/ui/input";
 import { Categories, levels, status } from "@/demoData";
 import Editor from "@/components/adminsidebar/rich-editor";
 import { FileUpload } from "@/components/ui/file-upload";
-
+import { tryCatch } from "@/hooks/try-catch";
+import { createCourse } from "./action";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
 const page = () => {
+  const [pendingTransition, startTransition] = useTransition();
   const form = useForm<z.infer<typeof courseCreateSchema>>({
     resolver: zodResolver(courseCreateSchema),
     defaultValues: {
       title: "",
       category: "",
       description: "",
-      duration: "",
+      duration: 0,
       fileKey: "",
       level: "",
-      price: "",
-      status: "",
+      price: 0,
+      status: "Draft",
     },
   });
   const [content, setContent] = useState(form.getValues("description"));
@@ -50,7 +54,21 @@ const page = () => {
   }, [content, form]);
 
   function onSubmit(values: z.infer<typeof courseCreateSchema>) {
-    console.log(values);
+    startTransition(async () => {
+      const { data, error } = await tryCatch(createCourse(values));
+      if (error) {
+        toast.error("An unexpected error occured. Please try again");
+        return;
+      }
+
+      if (data.status === "success") {
+        toast.success(data.message);
+        form.reset();
+        redirect("/admin/courses");
+      } else {
+        toast.error(data.message);
+      }
+    });
   }
 
   return (
@@ -77,7 +95,11 @@ const page = () => {
                   <FormItem>
                     <FormLabel className=" text-white">Thumbnail Url</FormLabel>
                     <FormControl>
-                      <FileUpload />
+                      <FileUpload
+                        onUploadComplete={(result) =>
+                          form.setValue("fileKey", result?.url!)
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -162,7 +184,7 @@ const page = () => {
 
               {/* duration and price */}
               <div className="flex flex-col md:flex-row items-center gap-x-2 w-full">
-                {/* dyration */}
+                {/* duration */}
                 <FormField
                   control={form.control}
                   name="duration"
@@ -172,7 +194,12 @@ const page = () => {
                         Duration (hours)
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" />
+                        <Input
+                          onChange={(e) =>
+                            form.setValue("duration", Number(e.target.value))
+                          }
+                          type="number"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -186,7 +213,12 @@ const page = () => {
                     <FormItem className="md:w-1/2 w-full mt-5 md:mt-auto">
                       <FormLabel className=" text-white">Price ($)</FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" />
+                        <Input
+                          onChange={(e) =>
+                            form.setValue("price", Number(e.target.value))
+                          }
+                          type="number"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -243,7 +275,13 @@ const page = () => {
                 <h2 className="text-lg font-semibold mb-2">Preview:</h2>
                 <div dangerouslySetInnerHTML={{ __html: content }} />
               </div>
-              <Button type="submit">Submit</Button>
+              <Button disabled={pendingTransition} type="submit">
+                {pendingTransition ? (
+                  <Loader size={4} className=" animate-spin" />
+                ) : (
+                  "Submit"
+                )}
+              </Button>
             </form>
           </Form>
         </CardContent>

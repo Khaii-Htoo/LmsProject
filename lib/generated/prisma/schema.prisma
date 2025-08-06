@@ -70,25 +70,18 @@ model Verification {
 }
 
 model Course {
-  id             String       @id @default(uuid())
-  title          String
-  description    String
-  fileKey        String
-  price          Int
-  duration       Int
-  level          String
-  category       String
-  subDescription String
-  slug           String       @unique
-  status         CourseStatus @default(Draft)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String
-}
-
-enum CourseStatus {
-  Draft
-  Published
-  Archived
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  fileKey     String
+  price       Int
+  duration    Int
+  level       String
+  category    String
+  slug        String   @unique
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
 }
