@@ -156,7 +156,7 @@ export const FileUpload = ({
     } catch (error) {
       console.error("Upload error:", error);
       toast.error(
-        `Failed to upload ${file.name}: ${error instanceof Error ? error.message : "Unknown error"}`
+        `Failed to upload ${error instanceof Error ? error.message : "Unknown error"}`
       );
 
       setUploadedFile((prev) =>

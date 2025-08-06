@@ -3,17 +3,40 @@ import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { S3 } from "@/lib/s3-client";
 import { z } from "zod";
-
+import { auth } from "@/lib/auth";
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import { headers } from "next/headers";
 const deleteSchema = z.object({
   key: z.string().min(1, "File key is required"),
 });
 
 export const DELETE = async (request: Request) => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const aj = arcjet
+    .withRule(
+      detectBot({
+        mode: "LIVE",
+        allow: [],
+      })
+    )
+    .withRule(
+      fixedWindow({
+        mode: "LIVE",
+        window: "1m",
+        max: 5,
+      })
+    );
   try {
+    const decision = await aj.protect(request, {
+      fingerprint: session?.user.id!,
+    });
+    if (decision.isDenied()) {
+      return NextResponse.json({ error: "Not good" }, { status: 429 });
+    }
     const body = await request.json();
-    console.log("Delete request:", body);
 
-    // Validate request body
     const validation = deleteSchema.safeParse(body);
     if (!validation.success) {
       console.error("Validation failed:", validation.error);

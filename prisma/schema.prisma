@@ -10,8 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id            String    @id
   name          String
@@ -22,7 +20,12 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
-  courses      Course[]
+  courses       Course[]
+
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
 
   @@unique([email])
   @@map("user")
@@ -38,6 +41,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
@@ -73,21 +78,21 @@ model Verification {
   @@map("verification")
 }
 
-model Course{
-  id String @id @default(uuid())
-  title String
+model Course {
+  id          String   @id @default(uuid())
+  title       String
   description String
-  fileKey String
-  price Int
-  duration Int
-  level String
-  category String
-   slug String @unique
-   status String
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
-   User User @relation(fields: [userId] , references: [id] , onDelete: Cascade)
-   userId String
+  fileKey     String
+  price       Int
+  duration    Int
+  level       String
+  category    String
+  slug        String   @unique
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
 }
 
 

@@ -26,8 +26,7 @@ export const createCourse = async (
       category,
       status,
     } = validation.data;
-
-    const newCourse = await prisma.course.create({
+    await prisma.course.create({
       data: {
         title,
         description,
