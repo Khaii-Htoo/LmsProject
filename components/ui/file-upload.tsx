@@ -59,11 +59,8 @@ export const FileUpload = ({
       console.log("Delete successful:", result);
 
       toast.success("File deleted successfully");
+      removeFile(false);
 
-      // Clear the file from state
-      removeFile(false); // false = don't show API delete call again
-
-      // Call callback
       onDeleteComplete && onDeleteComplete();
     } catch (error) {
       console.error("Delete error:", error);
@@ -85,7 +82,6 @@ export const FileUpload = ({
         progress: 0,
       });
 
-      // Step 1: Get presigned URL
       const presignedResponse = await fetch("/api/s3/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,7 +99,6 @@ export const FileUpload = ({
 
       const { presignedUrl, key } = await presignedResponse.json();
 
-      // Step 2: Upload to S3
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
@@ -154,10 +149,7 @@ export const FileUpload = ({
         xhr.send(file);
       });
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error(
-        `Failed to upload ${error instanceof Error ? error.message : "Unknown error"}`
-      );
+      toast.error(`Failed to upload `);
 
       setUploadedFile((prev) =>
         prev ? { ...prev, isUploading: false, progress: 0 } : null

@@ -3,17 +3,14 @@ import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { S3 } from "@/lib/s3-client";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { headers } from "next/headers";
+import { requireAdmin } from "@/app/data/admin/require-admin";
 const deleteSchema = z.object({
   key: z.string().min(1, "File key is required"),
 });
 
 export const DELETE = async (request: Request) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await requireAdmin();
   const aj = arcjet
     .withRule(
       detectBot({

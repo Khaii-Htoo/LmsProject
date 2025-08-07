@@ -5,8 +5,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3 } from "@/lib/s3-client";
 import { fileUploadSchema } from "@/lib/zod-schems";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { requireAdmin } from "@/app/data/admin/require-admin";
 
 const aj = arcjet
   .withRule(
@@ -24,9 +23,7 @@ const aj = arcjet
   );
 
 export const POST = async (request: Request) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await requireAdmin();
   try {
     const decision = await aj.protect(request, {
       fingerprint: session?.user.id!,
