@@ -15,8 +15,12 @@ export interface FetchedCourseData {
   status: string;
 }
 
-const EditCoursePage = async ({ params }: { params: { courseId: string } }) => {
-  const { courseId } = params;
+const EditCoursePage = async ({
+  params,
+}: {
+  params: Promise<{ courseId: string }>;
+}) => {
+  const { courseId } = await params;
 
   let courseData: FetchedCourseData | null = null;
   let error: string | null = null;

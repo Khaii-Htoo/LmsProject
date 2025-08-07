@@ -5,9 +5,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { AdminCourseType } from "@/app/data/admin/admin-get-courses";
-import { Button } from "@/components/ui/button";
-import { Eye, Pen, Trash } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Eye, Pen, Trash, Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { tryCatch } from "@/hooks/try-catch";
+import { deleteCourse } from "../action";
+import { toast } from "sonner";
 
 interface AdminCourseCardProps {
   data: AdminCourseType;
@@ -18,7 +32,6 @@ interface AdminCourseCardProps {
 const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
   data,
   onDelete,
-  onEdit,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -51,10 +64,38 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
     redirect(`/admin/courses/${data.id}/edit`);
   };
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onDelete) {
-      onDelete(data.id);
+  const handleDeleteCourse = async () => {
+    const { data: response, error } = await tryCatch(deleteCourse(data.id));
+    if (error) {
+      toast.error("An unexpected error occured. Please try again");
+      return;
+    }
+
+    if (response.status === "success") {
+      toast.success(response.message);
+
+      try {
+        const deleteResponse = await fetch("/api/s3/delete", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key: data.fileKey }),
+        });
+
+        if (!deleteResponse.ok) {
+          const errorData = await deleteResponse.json();
+          throw new Error(errorData.message || "Failed to delete file");
+        }
+
+        await deleteResponse.json();
+      } catch (error) {
+        console.error("Delete error:", error);
+        toast.error(
+          `Failed to delete file: ${error instanceof Error ? error.message : "Unknown error"}`
+        );
+      }
+      redirect("/admin/courses");
+    } else {
+      toast.error(response.message);
     }
   };
 
@@ -142,14 +183,34 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
                 <Pen className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                 Edit
               </Button>
-              <Button
-                variant={"destructive"}
-                onClick={handleDeleteClick}
-                className="group"
-              >
-                <Trash className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-                Delete
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger
+                  className={cn(
+                    buttonVariants({
+                      variant: "destructive",
+                    })
+                  )}
+                >
+                  <Trash2 /> Delete
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your account and remove your data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteCourse}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>

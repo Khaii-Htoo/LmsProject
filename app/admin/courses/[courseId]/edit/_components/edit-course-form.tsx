@@ -40,7 +40,6 @@ interface EditCourseFormProps {
 }
 
 const EditCourseForm: React.FC<EditCourseFormProps> = ({ courseData }) => {
-  const router = useRouter(); // For programmatic navigation if needed
   const [pendingTransition, startTransition] = useTransition();
   const formSchema = courseCreateSchema;
 
