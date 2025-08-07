@@ -77,7 +77,7 @@ model Verification {
 }
 
 model Course {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String
   fileKey     String
@@ -85,10 +85,35 @@ model Course {
   duration    Int
   level       String
   category    String
-  slug        String   @unique
+  slug        String    @unique
   status      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
+  chapter     Chapter[]
+}
+
+model Chapter {
+  id        String   @id @default(uuid())
+  title     String
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+
+  lesson Lesson[]
+}
+
+model Lesson {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  thumbnailKey String?
+  videoUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  Chapter      Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId    String
 }
