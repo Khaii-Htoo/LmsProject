@@ -1,6 +1,6 @@
-// components/FileUpload.tsx
+"use client";
 import { cn } from "@/lib/utils";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { IconUpload, IconX, IconTrash } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
@@ -17,28 +17,55 @@ const secondaryVariant = {
 };
 
 interface UploadedFile {
-  file: File;
+  file?: File; // Made optional since we might not have File object for initialFileUrl
   url?: string;
   key?: string;
   isUploading: boolean;
   isDeleting: boolean;
   progress: number;
+  fileName?: string; // Add fileName for initial files
+  isInitialFile?: boolean; // Flag to identify initial files
+}
+
+interface FileUploadType {
+  onChange?: (file: File | null) => void;
+  onUploadComplete?: (
+    uploadedFile: { key: string; url: string; fileName: string } | null
+  ) => void;
+  onDeleteComplete?: () => void;
+  initialFileUrl?: string;
 }
 
 export const FileUpload = ({
   onChange,
   onUploadComplete,
   onDeleteComplete,
-}: {
-  onChange?: (file: File | null) => void;
-  onUploadComplete?: (
-    uploadedFile: { key: string; url: string; fileName: string } | null
-  ) => void;
-  onDeleteComplete?: () => void;
-}) => {
+  initialFileUrl,
+}: FileUploadType) => {
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize with initialFileUrl if provided
+  useEffect(() => {
+    if (initialFileUrl && !uploadedFile) {
+      // Extract filename from URL (assuming URL format)
+      const fileName = initialFileUrl.split("/").pop() || "image";
+
+      setUploadedFile({
+        url: initialFileUrl,
+        fileName: fileName,
+        isUploading: false,
+        isDeleting: false,
+        progress: 100,
+        isInitialFile: true,
+        // Extract key from URL if it follows your S3 structure
+        key: initialFileUrl.includes("t3.storage.dev")
+          ? initialFileUrl.split("/").slice(-1)[0]
+          : undefined,
+      });
+    }
+  }, [initialFileUrl]);
 
   const deleteFromS3 = async (key: string) => {
     try {
@@ -80,6 +107,8 @@ export const FileUpload = ({
         isUploading: true,
         isDeleting: false,
         progress: 0,
+        fileName: file.name,
+        isInitialFile: false,
       });
 
       const presignedResponse = await fetch("/api/s3/upload", {
@@ -121,6 +150,7 @@ export const FileUpload = ({
                     progress: 100,
                     url: fileUrl,
                     key,
+                    isInitialFile: false,
                   }
                 : null
             );
@@ -149,7 +179,7 @@ export const FileUpload = ({
         xhr.send(file);
       });
     } catch (error) {
-      toast.error(`Failed to upload `);
+      toast.error(`Failed to upload`);
 
       setUploadedFile((prev) =>
         prev ? { ...prev, isUploading: false, progress: 0 } : null
@@ -167,8 +197,8 @@ export const FileUpload = ({
     // If there's an existing file, delete it from S3 first
     if (uploadedFile?.key) {
       await deleteFromS3(uploadedFile.key);
-    } else if (uploadedFile) {
-      // Just remove from UI if no S3 key yet
+    } else if (uploadedFile?.file) {
+      // Just remove from UI if no S3 key yet but has File object
       URL.revokeObjectURL(uploadedFile.file.name);
     }
 
@@ -185,7 +215,9 @@ export const FileUpload = ({
       }
 
       // Just remove from UI
-      URL.revokeObjectURL(uploadedFile.file.name);
+      if (uploadedFile.file) {
+        URL.revokeObjectURL(uploadedFile.file.name);
+      }
       setUploadedFile(null);
       onChange && onChange(null);
       onUploadComplete && onUploadComplete(null);
@@ -284,8 +316,14 @@ export const FileUpload = ({
 
                   <div className="aspect-square relative">
                     <img
-                      src={URL.createObjectURL(uploadedFile.file)}
-                      alt={uploadedFile.file.name}
+                      src={
+                        uploadedFile.isInitialFile
+                          ? uploadedFile.url
+                          : uploadedFile.file
+                            ? URL.createObjectURL(uploadedFile.file)
+                            : uploadedFile.url
+                      }
+                      alt={uploadedFile.fileName || "Uploaded image"}
                       className="w-full h-full object-cover rounded-t-md"
                     />
 
@@ -332,13 +370,15 @@ export const FileUpload = ({
                   <div className="p-3">
                     <p
                       className="text-sm text-neutral-600 dark:text-neutral-400 truncate font-medium"
-                      title={uploadedFile.file.name}
+                      title={uploadedFile.fileName}
                     >
-                      {uploadedFile.file.name}
+                      {uploadedFile.fileName}
                     </p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">
-                      {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
+                    {uploadedFile.file && (
+                      <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">
+                        {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    )}
 
                     {uploadedFile.isUploading && (
                       <div className="mt-2">
@@ -364,7 +404,9 @@ export const FileUpload = ({
                       !uploadedFile.isDeleting && (
                         <div className="mt-2">
                           <span className="text-xs text-green-600 font-medium">
-                            ✓ Upload Complete
+                            {uploadedFile.isInitialFile
+                              ? "✓ Current Image"
+                              : "✓ Upload Complete"}
                           </span>
                         </div>
                       )}

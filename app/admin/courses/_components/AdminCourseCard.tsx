@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { AdminCourseType } from "@/app/data/admin/admin-get-courses";
 import { Button } from "@/components/ui/button";
 import { Eye, Pen, Trash } from "lucide-react";
+import { redirect } from "next/navigation";
 
 interface AdminCourseCardProps {
   data: AdminCourseType;
@@ -38,19 +39,16 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false); // You might want to remove hover effects if not using rotation for hover
-    setCardRotation({ x: 0, y: 0 }); // Reset rotation
+    setIsHovered(false);
+    setCardRotation({ x: 0, y: 0 });
   };
 
   const handleMouseEnter = () => {
-    setIsHovered(true); // Still useful if you have other hover-specific styles
+    setIsHovered(true);
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onEdit) {
-      onEdit(data.id);
-    }
+    redirect(`/admin/courses/${data.id}/edit`);
   };
 
   const handleDeleteClick = (e: React.MouseEvent) => {
@@ -60,7 +58,6 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
     }
   };
 
-  // Styles for the 3D tilt effect
   const card3DStyles = {
     transform: `perspective(1000px) rotateX(${cardRotation.x}deg) rotateY(${cardRotation.y}deg) scale3d(${isHovered ? 1.02 : 1}, ${isHovered ? 1.02 : 1}, 1)`,
     transition: "transform 0.3s ease-out",
@@ -80,11 +77,11 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
       {/* Course Image Area */}
       <div className="relative w-full h-56  overflow-hidden bg-gray-200 dark:bg-gray-700">
         <Image
-          src={data.fileKey} // Assuming this is the correct path from your data
+          src={data.fileKey}
           alt={data.title}
           layout="fill"
           objectFit="cover"
-          className="transition-transform h-full duration-300 ease-out" // Subtle image transform on scale
+          className="transition-transform h-full duration-300 ease-out"
           priority
         />
       </div>
@@ -135,12 +132,7 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
         </h3>
 
         <div className=" flex flex-col space-y-3">
-          {" "}
-          {/* Changed to flex-col for better spacing */}
           <div className=" flex justify-between items-center">
-            {" "}
-            {/* Adjusted spacing */}
-            {/* Buttons are moved here to be consistently positioned */}
             <div className="flex space-x-2">
               <Button
                 variant={"outline"}
@@ -162,7 +154,6 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
           </div>
         </div>
 
-        {/* Persistent Action Button - Keeping this as per your previous example */}
         <button
           onClick={handleEditClick}
           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-5 rounded-lg font-bold flex items-center justify-center shadow-md transition-all duration-300 ease-in-out transform hover:scale-105"

@@ -83,7 +83,7 @@ const page = () => {
         <h1 className=" text-2xl">Create Course</h1>
       </div>
 
-      <Card>
+      <Card className=" py-7">
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
