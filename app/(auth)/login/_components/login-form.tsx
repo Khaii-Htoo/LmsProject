@@ -49,7 +49,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className=" min-w-md ">
+    <Card className=" min-w-md py-7 ">
       <CardHeader>
         {" "}
         <h1>Welcome Back !</h1>
