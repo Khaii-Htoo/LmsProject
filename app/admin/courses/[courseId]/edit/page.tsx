@@ -3,6 +3,7 @@ import { ChevronsLeft, Link } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import EditCourseForm from "./_components/edit-course-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export interface FetchedCourseData {
   id: string;
   title: string;
@@ -64,7 +65,18 @@ const EditCoursePage = async ({
           Edit Course
         </h1>
       </div>
-      <EditCourseForm courseData={courseData} />
+      <Tabs defaultValue="course-information">
+        <TabsList>
+          <TabsTrigger value="course-information">
+            Course Information
+          </TabsTrigger>
+          <TabsTrigger value="chapter-lesson">Chapter & Lesson</TabsTrigger>
+        </TabsList>
+        <TabsContent value="course-information">
+          <EditCourseForm courseData={courseData} />
+        </TabsContent>
+        <TabsContent value="chapter-lesson">test</TabsContent>
+      </Tabs>
     </div>
   );
 };
