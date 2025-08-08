@@ -17,6 +17,8 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 .env
+
+```bash
 DATABASE_URL=
 BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=
@@ -36,3 +38,4 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GOOGLE_REDIRECT_URL=
 YOUTUBE_REFRESH_TOKEN=
+```
