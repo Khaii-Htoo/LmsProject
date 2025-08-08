@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import EditCourseForm from "./_components/edit-course-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CourseStructure from "./_components/course-structure";
+import { getChaptersWithLessons } from "./chapter-action";
 export interface FetchedCourseData {
   id: string;
   title: string;
@@ -36,12 +38,14 @@ const EditCoursePage = async ({
     error = "Failed to load course data.";
   }
 
+  const chapter = await getChaptersWithLessons(courseId);
+  console.log(chapter);
+
   if (error || !courseData) {
     return (
       <div className="p-8 text-center text-red-500">
         <h1>Error</h1>
         <p>{error}</p>
-        {/* Optionally add a link back */}
         <Link href="/admin/courses" className="text-blue-500 underline">
           Go back to courses
         </Link>
@@ -75,7 +79,9 @@ const EditCoursePage = async ({
         <TabsContent value="course-information">
           <EditCourseForm courseData={courseData} />
         </TabsContent>
-        <TabsContent value="chapter-lesson">test</TabsContent>
+        <TabsContent value="chapter-lesson">
+          <CourseStructure courseId={courseId} />
+        </TabsContent>
       </Tabs>
     </div>
   );

@@ -30,7 +30,7 @@ import { Categories, levels, status } from "@/demoData";
 import Editor from "@/components/adminsidebar/rich-editor";
 import { FileUpload } from "@/components/ui/file-upload";
 import { tryCatch } from "@/hooks/try-catch";
-import { createCourse } from "./action";
+import { createCourse } from "./course-create-action";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 const page = () => {

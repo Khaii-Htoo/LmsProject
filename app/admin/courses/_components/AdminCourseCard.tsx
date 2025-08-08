@@ -20,7 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { tryCatch } from "@/hooks/try-catch";
-import { deleteCourse } from "../action";
+import { deleteCourse } from "../course-delete-action";
 import { toast } from "sonner";
 
 interface AdminCourseCardProps {

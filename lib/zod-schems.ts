@@ -36,3 +36,21 @@ export const fileUploadSchema = z.object({
 });
 
 export type FileUploadRequest = z.infer<typeof fileUploadSchema>;
+
+// create chapter schema
+
+export const chapterCreateSchema = z.object({
+  title: z.string().min(1, { message: "Title must be at least 3 characters" }),
+});
+
+export type chapterSchemaType = z.infer<typeof chapterCreateSchema>;
+
+export const lessonCreateSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  description: z.string().min(1, { message: "Title is required" }),
+  thumbnailKey: z.string().min(1, { message: "Title is required" }),
+  videoUrl: z.string().min(1, { message: "Title is required" }),
+  chapterId: z.string().min(1, { message: "Chapter ID is required" }),
+});
+
+export type lessonSchemaType = z.infer<typeof lessonCreateSchema>;
