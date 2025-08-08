@@ -1,13 +1,12 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import {
-  DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragOverlay,
+  Active,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -21,75 +20,65 @@ import {
   Trash2,
   ChevronDown,
   ChevronRight,
-  Plus,
+  Book,
+  GraduationCap,
+  TvMinimalPlay,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import CreateNewChapter from "./create-new-chapter";
 import CreateNewLesson from "./create-new-lesson";
+import { ChapterWithLessonsType, LessonType } from "@/type"; // Assuming your types are in @/types
 
-interface Lesson {
-  id: string;
-  title: string;
+// Helper function to find the chapter that a lesson belongs to
+function findChapterByLessonId(
+  chapters: ChapterWithLessonsType[],
+  lessonId: string
+) {
+  return chapters.find((chapter) =>
+    chapter.lesson.some((lesson: LessonType) => lesson.id === lessonId)
+  );
 }
 
-interface Chapter {
-  chapterId: string;
-  title: string;
-  lessons: Lesson[];
-}
-
-function findChapter(chapters: Chapter[], lessonId: string) {
-  for (const chapter of chapters) {
-    if (chapter.lessons.some((lesson) => lesson.id === lessonId)) {
-      return chapter;
-    }
-  }
-  return null;
-}
-
+// === LESSON LIST COMPONENT ===
 function LessonList({
   chapter,
   isExpanded,
+  courseId,
 }: {
-  chapter: Chapter;
+  chapter: ChapterWithLessonsType;
   isExpanded: boolean;
+  courseId: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [maxHeight, setMaxHeight] = useState("0px");
 
   useEffect(() => {
     if (ref.current) {
-      if (isExpanded) {
-        setMaxHeight(`${ref.current.scrollHeight}px`);
-      } else {
-        setMaxHeight("0px");
-      }
+      setMaxHeight(isExpanded ? `${ref.current.scrollHeight}px` : "0px");
     }
-  }, [isExpanded, chapter.lessons.length]);
+  }, [isExpanded, chapter.lesson.length]); // Use chapter.lesson (singular)
 
   return (
-    <>
-      <div
-        ref={ref}
-        style={{ maxHeight: maxHeight }}
-        className="overflow-hidden transition-all duration-300 ease-in-out md:pl-8 pt-2 mb-7"
+    <div
+      ref={ref}
+      style={{ maxHeight }}
+      className="overflow-hidden transition-all duration-300 ease-in-out md:pl-8 pt-2 mb-7"
+    >
+      <SortableContext
+        items={chapter.lesson.map((lesson) => lesson.id)} // Use chapter.lesson
+        strategy={verticalListSortingStrategy}
       >
-        <SortableContext
-          items={chapter.lessons.map((lesson) => lesson.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          {chapter.lessons.map((lesson) => (
-            <SortableLesson key={lesson.id} lesson={lesson} />
-          ))}
-        </SortableContext>
-      </div>
-      <CreateNewLesson chapterId="hshbsh" />
-    </>
+        {chapter.lesson.map((lesson) => (
+          <SortableLesson key={lesson.id} lesson={lesson} />
+        ))}
+      </SortableContext>
+      <CreateNewLesson chapterId={chapter.id} courseId={courseId} />
+    </div>
   );
 }
 
-function SortableLesson({ lesson }: { lesson: Lesson }) {
+// === SORTABLE LESSON COMPONENT ===
+function SortableLesson({ lesson }: { lesson: LessonType }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: lesson.id });
 
@@ -102,19 +91,19 @@ function SortableLesson({ lesson }: { lesson: Lesson }) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center border bg-gray-100 dark:bg-zinc-800 rounded-md p-2  my-0.5  transition-colors  text-zinc-900 dark:text-zinc-100"
+      className="flex items-center border bg-gray-100 dark:bg-zinc-800 rounded-md p-2 my-1"
     >
       <div
-        className="w-8 h-8 flex items-center justify-center cursor-grab text-zinc-500 hover:text-zinc-300 transition-colors"
+        className="w-8 h-8 flex items-center justify-center  text-zinc-500"
         {...attributes}
         {...listeners}
       >
-        <GripVertical size={20} />
+        <TvMinimalPlay size={20} />
       </div>
       <div className="flex-grow ml-2">{lesson.title}</div>
       <button
-        className="text-zinc-500 hover:text-red-500 transition-colors p-1 rounded"
-        onPointerDown={(e) => e.stopPropagation()} // Stop event propagation
+        className="text-zinc-500 hover:text-red-500 p-1 rounded"
+        onPointerDown={(e) => e.stopPropagation()}
       >
         <Trash2 size={16} />
       </button>
@@ -122,9 +111,16 @@ function SortableLesson({ lesson }: { lesson: Lesson }) {
   );
 }
 
-function SortableChapter({ chapter }: { chapter: Chapter }) {
+// === SORTABLE CHAPTER COMPONENT ===
+function SortableChapter({
+  chapter,
+  courseId,
+}: {
+  chapter: ChapterWithLessonsType;
+  courseId: string;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: chapter.chapterId });
+    useSortable({ id: chapter.id }); // Use chapter.id instead of chapterId
 
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -133,24 +129,20 @@ function SortableChapter({ chapter }: { chapter: Chapter }) {
     transition,
   };
 
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className=" rounded-md p-2 my-2 mb-3 border cursor-grab"
+      className="rounded-md p-2 my-2 mb-3 border  bg-white dark:bg-zinc-800"
     >
       <div className="flex items-center">
-        <div className="w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors">
-          <GripVertical size={20} />
+        <div className="w-8 h-8 flex items-center justify-center text-zinc-500">
+          <Book size={20} />
         </div>
         <button
-          onClick={toggleExpanded}
+          onClick={() => setIsExpanded(!isExpanded)}
           className="flex-grow font-semibold flex items-center ml-2 p-1 rounded"
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -162,178 +154,187 @@ function SortableChapter({ chapter }: { chapter: Chapter }) {
           )}
         </button>
         <button
-          className="text-zinc-500 hover:text-red-500 transition-colors p-1 rounded"
+          className="text-zinc-500 hover:text-red-500 p-1 rounded"
           onPointerDown={(e) => e.stopPropagation()}
         >
           <Trash2 size={16} />
         </button>
       </div>
-      <LessonList chapter={chapter} isExpanded={isExpanded} />
+      <LessonList
+        chapter={chapter}
+        isExpanded={isExpanded}
+        courseId={courseId}
+      />
     </div>
   );
 }
 
-export default function CourseStructure({ courseId }: { courseId: string }) {
-  const [chapters, setChapters] = useState<Chapter[]>([
-    {
-      chapterId: "chapter-1",
-      title: "Chapter One",
-      lessons: [
-        { id: "lesson-1", title: "Lesson One" },
-        { id: "lesson-2", title: "Lesson Two" },
-      ],
-    },
-    {
-      chapterId: "chapter-2",
-      title: "Chapter Two",
-      lessons: [
-        { id: "lesson-3", title: "Lesson Three" },
-        { id: "lesson-4", title: "Lesson Four" },
-      ],
-    },
-  ]);
+// === MAIN COURSE STRUCTURE COMPONENT ===
+export default function CourseStructure({
+  courseId,
+  chapters: initialChapters, // Rename prop for clarity
+}: {
+  courseId: string;
+  chapters: ChapterWithLessonsType[];
+}) {
+  const [chapters, setChapters] = useState(initialChapters);
+  const [activeItem, setActiveItem] = useState<Active | null>(null);
+  const [activeChapter, setActiveChapter] =
+    useState<ChapterWithLessonsType | null>(null);
+  const [activeLesson, setActiveLesson] = useState<LessonType | null>(null);
 
-  const [activeItem, setActiveItem] = useState<any>(null);
+  // Sync state if the initial prop changes from the parent
+  useEffect(() => {
+    setChapters(initialChapters);
+  }, [initialChapters]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: { active: Active }) => {
     const { active } = event;
     setActiveItem(active);
+
+    // Find and set the active chapter or lesson for the DragOverlay
+    const isChapter = chapters.some((c) => c.id === active.id);
+    if (isChapter) {
+      setActiveChapter(chapters.find((c) => c.id === active.id) || null);
+      setActiveLesson(null);
+    } else {
+      const chapter = findChapterByLessonId(chapters, active.id as string);
+      const lesson = chapter?.lesson.find((l) => l.id === active.id);
+      setActiveLesson(lesson || null);
+      setActiveChapter(null);
+    }
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: { active: Active; over: Active | null }) => {
     const { active, over } = event;
 
-    if (!over) {
+    if (!over || active.id === over.id) {
       setActiveItem(null);
       return;
     }
 
-    if (active.id.toString().startsWith("chapter-")) {
-      const oldIndex = chapters.findIndex(
-        (chapter) => chapter.chapterId === active.id
-      );
-      const newIndex = chapters.findIndex(
-        (chapter) => chapter.chapterId === over.id
-      );
+    const isDraggingChapter = chapters.some((c) => c.id === active.id);
 
+    // --- CASE 1: Reordering Chapters ---
+    if (isDraggingChapter) {
+      const oldIndex = chapters.findIndex((c) => c.id === active.id);
+      const newIndex = chapters.findIndex((c) => c.id === over.id);
       if (oldIndex !== -1 && newIndex !== -1) {
-        setChapters((prevChapters) =>
-          arrayMove(prevChapters, oldIndex, newIndex)
+        setChapters((prev) => arrayMove(prev, oldIndex, newIndex));
+      }
+    }
+
+    // --- CASE 2: Reordering Lessons ---
+    else {
+      const activeChapter = findChapterByLessonId(
+        chapters,
+        active.id as string
+      );
+      const overChapter = findChapterByLessonId(chapters, over.id as string);
+
+      if (!activeChapter || !overChapter) return;
+
+      // Reordering within the same chapter
+      if (activeChapter.id === overChapter.id) {
+        setChapters((prev) =>
+          prev.map((chapter) => {
+            if (chapter.id === activeChapter.id) {
+              const oldIndex = chapter.lesson.findIndex(
+                (l) => l.id === active.id
+              );
+              const newIndex = chapter.lesson.findIndex(
+                (l) => l.id === over.id
+              );
+              return {
+                ...chapter,
+                lesson: arrayMove(chapter.lesson, oldIndex, newIndex),
+              };
+            }
+            return chapter;
+          })
         );
-      }
-    }
-
-    if (active.id.toString().startsWith("lesson-")) {
-      const activeChapter = findChapter(chapters, active.id);
-      const overChapter = findChapter(chapters, over.id);
-
-      if (activeChapter && overChapter) {
-        const activeChapterId = activeChapter.chapterId;
-        const overChapterId = overChapter.chapterId;
-
-        if (activeChapterId === overChapterId) {
-          setChapters((prevChapters) =>
-            prevChapters.map((chapter) => {
-              if (chapter.chapterId === activeChapterId) {
-                const oldIndex = chapter.lessons.findIndex(
-                  (lesson) => lesson.id === active.id
-                );
-                const newIndex = chapter.lessons.findIndex(
-                  (lesson) => lesson.id === over.id
-                );
-                return {
-                  ...chapter,
-                  lessons: arrayMove(chapter.lessons, oldIndex, newIndex),
-                };
-              }
-              return chapter;
-            })
+      } else {
+        // Moving a lesson to a different chapter
+        setChapters((prev) => {
+          const newChapters = [...prev];
+          const activeChapterIndex = newChapters.findIndex(
+            (c) => c.id === activeChapter.id
           );
-        } else {
-          setChapters((prevChapters) => {
-            const newChapters = [...prevChapters];
+          const overChapterIndex = newChapters.findIndex(
+            (c) => c.id === overChapter.id
+          );
 
-            const activeChapterIndex = newChapters.findIndex(
-              (chapter) => chapter.chapterId === activeChapterId
-            );
-            const activeLessonIndex = newChapters[
-              activeChapterIndex
-            ].lessons.findIndex((lesson) => lesson.id === active.id);
-            const [movedLesson] = newChapters[
-              activeChapterIndex
-            ].lessons.splice(activeLessonIndex, 1);
+          const activeLessonIndex = activeChapter.lesson.findIndex(
+            (l) => l.id === active.id
+          );
+          const [movedLesson] = newChapters[activeChapterIndex].lesson.splice(
+            activeLessonIndex,
+            1
+          );
 
-            const overChapterIndex = newChapters.findIndex(
-              (chapter) => chapter.chapterId === overChapterId
-            );
-            const overLessonIndex = newChapters[
-              overChapterIndex
-            ].lessons.findIndex((lesson) => lesson.id === over.id);
-            newChapters[overChapterIndex].lessons.splice(
-              overLessonIndex,
-              0,
-              movedLesson
-            );
+          const overLessonIndex = overChapter.lesson.findIndex(
+            (l) => l.id === over.id
+          );
+          newChapters[overChapterIndex].lesson.splice(
+            overLessonIndex,
+            0,
+            movedLesson
+          );
 
-            return newChapters;
-          });
-        }
+          return newChapters;
+        });
       }
     }
-
     setActiveItem(null);
+    setActiveChapter(null);
+    setActiveLesson(null);
   };
 
   return (
     <Card>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="w-full p-4">
-          <CardHeader className="md:flex flex-row justify-between items-center space-y-0 pb-2">
-            <h1 className="md:text-3xl font-extrabold ">Course Structure</h1>
-            <CreateNewChapter courseId={courseId} />
-          </CardHeader>
-          <CardContent>
-            <SortableContext
-              items={chapters.map((chapter) => chapter.chapterId)}
-              strategy={verticalListSortingStrategy}
-            >
-              {chapters.map((chapter) => (
-                <SortableChapter key={chapter.chapterId} chapter={chapter} />
-              ))}
-            </SortableContext>
-          </CardContent>
-        </div>
-        <DragOverlay>
-          {activeItem &&
-            (activeItem.id.toString().startsWith("chapter-") ? (
-              <div className="bg-zinc-700 rounded-md p-2 my-2 shadow-md opacity-80">
-                <div className="flex items-center">
-                  <GripVertical size={20} className="text-zinc-500" />
-                  <div className="flex-grow font-semibold ml-2">
-                    {activeItem.id}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-zinc-800 rounded-md p-2 my-1 shadow-sm opacity-80">
-                <div className="flex items-center">
-                  <GripVertical size={20} className="text-zinc-500" />
-                  <div className="flex-grow ml-2">{activeItem.id}</div>
-                </div>
-              </div>
+      <div className="w-full p-4">
+        <CardHeader className="md:flex flex-row justify-between items-center space-y-0 pb-2">
+          <h1 className="md:text-3xl font-extrabold ">Course Structure</h1>
+          <CreateNewChapter courseId={courseId} />
+        </CardHeader>
+        <CardContent>
+          <SortableContext
+            items={chapters.map((chapter) => chapter.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {chapters.map((chapter) => (
+              <SortableChapter
+                key={chapter.id}
+                chapter={chapter}
+                courseId={courseId}
+              />
             ))}
-        </DragOverlay>
-      </DndContext>
+          </SortableContext>
+        </CardContent>
+      </div>
+
+      {activeChapter ? (
+        <div className="bg-white dark:bg-zinc-900 rounded-md p-2 my-2 shadow-md opacity-80 border cursor-grab">
+          <div className="flex items-center">
+            <GripVertical size={20} className="text-zinc-500" />
+            <div className="flex-grow font-semibold ml-2">
+              {activeChapter.title}
+            </div>
+          </div>
+        </div>
+      ) : activeLesson ? (
+        <div className="bg-gray-100 dark:bg-zinc-800 rounded-md p-2 my-1 shadow-sm opacity-80 border">
+          <div className="flex items-center">
+            <GripVertical size={20} className="text-zinc-500" />
+            <div className="flex-grow ml-2">{activeLesson.title}</div>
+          </div>
+        </div>
+      ) : null}
     </Card>
   );
 }

@@ -38,8 +38,7 @@ const EditCoursePage = async ({
     error = "Failed to load course data.";
   }
 
-  const chapter = await getChaptersWithLessons(courseId);
-  console.log(chapter);
+  const chapters = await getChaptersWithLessons(courseId);
 
   if (error || !courseData) {
     return (
@@ -80,7 +79,11 @@ const EditCoursePage = async ({
           <EditCourseForm courseData={courseData} />
         </TabsContent>
         <TabsContent value="chapter-lesson">
-          <CourseStructure courseId={courseId} />
+          {!Array.isArray(chapters) ? (
+            "error"
+          ) : (
+            <CourseStructure courseId={courseId} chapters={chapters} />
+          )}
         </TabsContent>
       </Tabs>
     </div>

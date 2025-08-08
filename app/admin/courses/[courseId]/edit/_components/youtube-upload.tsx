@@ -5,11 +5,15 @@ import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-const YouTubeUpload = () => {
+interface PropsType {
+  videoUrl: string;
+  setVideoUrl: (videoUrl: string) => void;
+}
+
+const YouTubeUpload = ({ videoUrl, setVideoUrl }: PropsType) => {
   // State for all our component needs
   const [videoTitle, setVideoTitle] = useState("");
   const [videoDescription, setVideoDescription] = useState("");
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -23,7 +27,7 @@ const YouTubeUpload = () => {
       setIsUploading(true);
       setUploadError(null);
       setUploadProgress(0);
-      setVideoUrl(null);
+      setVideoUrl("");
 
       // Create a FormData object to send the file and text data
       const formData = new FormData();
@@ -66,35 +70,15 @@ const YouTubeUpload = () => {
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto p-6 border-2 border-dashed rounded-lg bg-gray-50 text-gray-700"
+      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto p-6 border-2 border-dashed rounded-lg bg-gray-50 dark:bg-zinc-800 dark:text-gray-100 text-gray-700"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Input fields for Title and Description */}
-      <div className="w-full mb-4 space-y-3">
-        <input
-          type="text"
-          placeholder="Video Title"
-          value={videoTitle}
-          onChange={(e) => setVideoTitle(e.target.value)}
-          disabled={isUploading}
-          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-        />
-        <textarea
-          placeholder="Video Description"
-          value={videoDescription}
-          onChange={(e) => setVideoDescription(e.target.value)}
-          disabled={isUploading}
-          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-          rows={3}
-        />
-      </div>
-
       {/* Dropzone */}
       <div
         {...getRootProps()}
-        className={`w-full p-8 text-center border-2 border-dashed rounded-md cursor-pointer ${
+        className={`w-full p-8 text-center border-2 border-dashed dark:border-gray-600 rounded-md cursor-pointer bg-gray-50 dark:bg-zinc-800 dark:text-gray-100 text-gray-700 ${
           isUploading
             ? "cursor-not-allowed bg-gray-200"
             : "bg-white hover:bg-gray-100"

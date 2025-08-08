@@ -17,6 +17,13 @@ export default function Editor({ value, onChange }: JoditEditorProps) {
 
   const config = useMemo(
     () => ({
+      events: {
+        keydown: function (e: any) {
+          if (e.key === " ") {
+            e.stopPropagation();
+          }
+        },
+      },
       readonly: false,
       height: 200,
       toolbarButtonSize: "middle" as "middle",

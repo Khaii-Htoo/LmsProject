@@ -47,9 +47,8 @@ export type chapterSchemaType = z.infer<typeof chapterCreateSchema>;
 
 export const lessonCreateSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
-  description: z.string().min(1, { message: "Title is required" }),
-  thumbnailKey: z.string().min(1, { message: "Title is required" }),
-  videoUrl: z.string().min(1, { message: "Title is required" }),
+  description: z.string().min(1, { message: "Description is required" }),
+  videoUrl: z.string().min(1, { message: "VideoUrl is required" }),
   chapterId: z.string().min(1, { message: "Chapter ID is required" }),
 });
 

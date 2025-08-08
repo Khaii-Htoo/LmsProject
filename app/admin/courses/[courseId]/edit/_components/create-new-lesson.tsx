@@ -6,11 +6,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  AlertDialogOverlay, // <--- Imported AlertDialogOverlay
+  AlertDialogOverlay,
 } from "@/components/ui/alert-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -29,26 +28,61 @@ import { AlertDialogDescription } from "@radix-ui/react-alert-dialog";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
 import YouTubeUpload from "./youtube-upload";
+import { createLesson } from "../lesson-action";
+import { redirect } from "next/navigation";
+import Editor from "@/components/adminsidebar/rich-editor";
 
-const CreateNewLesson = ({ chapterId }: { chapterId: string }) => {
+const CreateNewLesson = ({
+  chapterId,
+  courseId,
+}: {
+  chapterId: string;
+  courseId: string;
+}) => {
   const [pendingTransition, startTransition] = useTransition();
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+
   const form = useForm<lessonSchemaType>({
     resolver: zodResolver(lessonCreateSchema),
     defaultValues: {
       title: "",
       description: "",
-      thumbnailKey: "",
       videoUrl: "",
       chapterId: chapterId,
     },
   });
+  const [content, setContent] = useState(form.getValues("description"));
+
+  useEffect(() => {
+    form.setValue("description", content);
+  }, [content, setContent]);
 
   useEffect(() => {
     form.setValue("chapterId", chapterId);
   }, [chapterId, form]);
 
-  async function onSubmit(values: lessonSchemaType) {}
+  useEffect(() => {
+    form.setValue("videoUrl", videoUrl);
+  }, [videoUrl, setVideoUrl]);
+
+  async function onSubmit(values: lessonSchemaType) {
+    startTransition(async () => {
+      const { data, error } = await tryCatch(createLesson(values));
+      if (error) {
+        toast.error("An unexpected error occured. Please try again");
+        return;
+      }
+
+      if (data.status === "success") {
+        toast.success(data.message);
+        form.reset();
+        redirect(`/admin/courses/${courseId}/edit`);
+      } else {
+        toast.error(data.message);
+      }
+    });
+  }
 
   return (
     <AlertDialog>
@@ -78,12 +112,21 @@ const CreateNewLesson = ({ chapterId }: { chapterId: string }) => {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Lesson Title" {...field} />
+                    <Input
+                      placeholder="Lesson Title"
+                      {...field}
+                      onKeyDown={(e: any) => {
+                        if (e.key === " ") {
+                          e.stopPropagation();
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            />{" "}
+            <YouTubeUpload videoUrl={videoUrl} setVideoUrl={setVideoUrl} />
             <FormField
               control={form.control}
               name="description"
@@ -91,24 +134,9 @@ const CreateNewLesson = ({ chapterId }: { chapterId: string }) => {
                 <FormItem>
                   <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Lesson Description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <YouTubeUpload />
-            <FormField
-              control={form.control}
-              name="thumbnailKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thumbnail Key (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., image-123.jpg (or link to uploaded thumbnail)"
-                      {...field}
-                    />
+                    <div className="w-full">
+                      <Editor value={content} onChange={setContent} />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -125,7 +153,6 @@ const CreateNewLesson = ({ chapterId }: { chapterId: string }) => {
                 </FormItem>
               )}
             />
-            {/* youtube */}
             <AlertDialogFooter>
               <AlertDialogCancel
                 onClick={(e) => {
@@ -140,7 +167,7 @@ const CreateNewLesson = ({ chapterId }: { chapterId: string }) => {
                 disabled={pendingTransition || isUploadingVideo}
                 onPointerDown={(e: any) => e.stopPropagation()}
               >
-                {pendingTransition || isUploadingVideo ? (
+                {pendingTransition ? (
                   <Loader size={16} className="animate-spin" />
                 ) : (
                   "Create Lesson"

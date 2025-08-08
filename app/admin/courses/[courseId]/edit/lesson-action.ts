@@ -61,15 +61,13 @@ export const createLesson = async (
       };
     }
 
-    const { title, description, thumbnailKey, videoUrl, chapterId } =
-      validation.data;
+    const { title, description, videoUrl, chapterId } = validation.data;
 
     // Create the new lesson in the database
     await prisma.lesson.create({
       data: {
         title,
         description,
-        thumbnailKey,
         videoUrl,
         chapterId,
       },

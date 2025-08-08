@@ -8401,7 +8401,6 @@ export namespace Prisma {
     id: string | null
     title: string | null
     description: string | null
-    thumbnailKey: string | null
     videoUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8412,7 +8411,6 @@ export namespace Prisma {
     id: string | null
     title: string | null
     description: string | null
-    thumbnailKey: string | null
     videoUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8423,7 +8421,6 @@ export namespace Prisma {
     id: number
     title: number
     description: number
-    thumbnailKey: number
     videoUrl: number
     createdAt: number
     updatedAt: number
@@ -8436,7 +8433,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    thumbnailKey?: true
     videoUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -8447,7 +8443,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    thumbnailKey?: true
     videoUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -8458,7 +8453,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    thumbnailKey?: true
     videoUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -8542,7 +8536,6 @@ export namespace Prisma {
     id: string
     title: string
     description: string | null
-    thumbnailKey: string | null
     videoUrl: string | null
     createdAt: Date
     updatedAt: Date
@@ -8570,7 +8563,6 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    thumbnailKey?: boolean
     videoUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8582,7 +8574,6 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    thumbnailKey?: boolean
     videoUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8594,7 +8585,6 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    thumbnailKey?: boolean
     videoUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8606,14 +8596,13 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    thumbnailKey?: boolean
     videoUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     chapterId?: boolean
   }
 
-  export type LessonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "thumbnailKey" | "videoUrl" | "createdAt" | "updatedAt" | "chapterId", ExtArgs["result"]["lesson"]>
+  export type LessonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "videoUrl" | "createdAt" | "updatedAt" | "chapterId", ExtArgs["result"]["lesson"]>
   export type LessonInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Chapter?: boolean | ChapterDefaultArgs<ExtArgs>
   }
@@ -8633,7 +8622,6 @@ export namespace Prisma {
       id: string
       title: string
       description: string | null
-      thumbnailKey: string | null
       videoUrl: string | null
       createdAt: Date
       updatedAt: Date
@@ -9065,7 +9053,6 @@ export namespace Prisma {
     readonly id: FieldRef<"Lesson", 'String'>
     readonly title: FieldRef<"Lesson", 'String'>
     readonly description: FieldRef<"Lesson", 'String'>
-    readonly thumbnailKey: FieldRef<"Lesson", 'String'>
     readonly videoUrl: FieldRef<"Lesson", 'String'>
     readonly createdAt: FieldRef<"Lesson", 'DateTime'>
     readonly updatedAt: FieldRef<"Lesson", 'DateTime'>
@@ -9596,7 +9583,6 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     description: 'description',
-    thumbnailKey: 'thumbnailKey',
     videoUrl: 'videoUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -10191,7 +10177,6 @@ export namespace Prisma {
     id?: StringFilter<"Lesson"> | string
     title?: StringFilter<"Lesson"> | string
     description?: StringNullableFilter<"Lesson"> | string | null
-    thumbnailKey?: StringNullableFilter<"Lesson"> | string | null
     videoUrl?: StringNullableFilter<"Lesson"> | string | null
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
@@ -10203,7 +10188,6 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
-    thumbnailKey?: SortOrderInput | SortOrder
     videoUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10218,7 +10202,6 @@ export namespace Prisma {
     NOT?: LessonWhereInput | LessonWhereInput[]
     title?: StringFilter<"Lesson"> | string
     description?: StringNullableFilter<"Lesson"> | string | null
-    thumbnailKey?: StringNullableFilter<"Lesson"> | string | null
     videoUrl?: StringNullableFilter<"Lesson"> | string | null
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
@@ -10230,7 +10213,6 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
-    thumbnailKey?: SortOrderInput | SortOrder
     videoUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10247,7 +10229,6 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Lesson"> | string
     title?: StringWithAggregatesFilter<"Lesson"> | string
     description?: StringNullableWithAggregatesFilter<"Lesson"> | string | null
-    thumbnailKey?: StringNullableWithAggregatesFilter<"Lesson"> | string | null
     videoUrl?: StringNullableWithAggregatesFilter<"Lesson"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Lesson"> | Date | string
@@ -10806,7 +10787,6 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    thumbnailKey?: string | null
     videoUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10817,7 +10797,6 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    thumbnailKey?: string | null
     videoUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10828,7 +10807,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10839,7 +10817,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10850,7 +10827,6 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    thumbnailKey?: string | null
     videoUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10861,7 +10837,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10871,7 +10846,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11367,7 +11341,6 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    thumbnailKey?: SortOrder
     videoUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11378,7 +11351,6 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    thumbnailKey?: SortOrder
     videoUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11389,7 +11361,6 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    thumbnailKey?: SortOrder
     videoUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12447,7 +12418,6 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    thumbnailKey?: string | null
     videoUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12457,7 +12427,6 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    thumbnailKey?: string | null
     videoUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12539,7 +12508,6 @@ export namespace Prisma {
     id?: StringFilter<"Lesson"> | string
     title?: StringFilter<"Lesson"> | string
     description?: StringNullableFilter<"Lesson"> | string | null
-    thumbnailKey?: StringNullableFilter<"Lesson"> | string | null
     videoUrl?: StringNullableFilter<"Lesson"> | string | null
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
@@ -12802,7 +12770,6 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    thumbnailKey?: string | null
     videoUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12812,7 +12779,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12822,7 +12788,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12832,7 +12797,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    thumbnailKey?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -33,3 +33,12 @@ export type ChapterWithLessonsType = {
     chapterId: string;
   }[];
 };
+export type LessonType = {
+  id: string;
+  title: string;
+  description: string | null; // Can be a string or null
+  videoUrl: string | null; // Can be a string or null
+  createdAt: Date;
+  updatedAt: Date;
+  chapterId: string;
+};

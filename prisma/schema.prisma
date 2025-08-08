@@ -113,7 +113,6 @@ model Lesson{
    id String @id @default(uuid())
    title String
    description String?
-   thumbnailKey String?
    videoUrl String?
    createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
