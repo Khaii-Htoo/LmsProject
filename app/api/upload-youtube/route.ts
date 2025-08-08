@@ -57,8 +57,7 @@ export async function POST(request: NextRequest) {
     );
 
     auth.setCredentials({
-      refresh_token:
-        "1//04bg2eoqPr3j7CgYIARAAGAQSNwF-L9IrpTF87iMVReulSEujRBO4h8rvzSEG0Ii1vJPTw54_rrUn3r5cjo9K5rKUbPAIGqYuDAk",
+      refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
     });
 
     // Create a readable stream for the YouTube API
