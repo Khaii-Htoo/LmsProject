@@ -7,8 +7,8 @@ import ReactPlayer from "react-player";
 interface Lesson {
   id: string;
   title: string;
-  description?: string;
-  videoUrl?: string;
+  description: string;
+  videoUrl: string;
   createdAt: Date;
   updatedAt: Date;
 }

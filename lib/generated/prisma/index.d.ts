@@ -8535,8 +8535,8 @@ export namespace Prisma {
   export type LessonGroupByOutputType = {
     id: string
     title: string
-    description: string | null
-    videoUrl: string | null
+    description: string
+    videoUrl: string
     createdAt: Date
     updatedAt: Date
     chapterId: string
@@ -8621,8 +8621,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
-      description: string | null
-      videoUrl: string | null
+      description: string
+      videoUrl: string
       createdAt: Date
       updatedAt: Date
       chapterId: string
@@ -10176,8 +10176,8 @@ export namespace Prisma {
     NOT?: LessonWhereInput | LessonWhereInput[]
     id?: StringFilter<"Lesson"> | string
     title?: StringFilter<"Lesson"> | string
-    description?: StringNullableFilter<"Lesson"> | string | null
-    videoUrl?: StringNullableFilter<"Lesson"> | string | null
+    description?: StringFilter<"Lesson"> | string
+    videoUrl?: StringFilter<"Lesson"> | string
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
     chapterId?: StringFilter<"Lesson"> | string
@@ -10187,8 +10187,8 @@ export namespace Prisma {
   export type LessonOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
-    description?: SortOrderInput | SortOrder
-    videoUrl?: SortOrderInput | SortOrder
+    description?: SortOrder
+    videoUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     chapterId?: SortOrder
@@ -10201,8 +10201,8 @@ export namespace Prisma {
     OR?: LessonWhereInput[]
     NOT?: LessonWhereInput | LessonWhereInput[]
     title?: StringFilter<"Lesson"> | string
-    description?: StringNullableFilter<"Lesson"> | string | null
-    videoUrl?: StringNullableFilter<"Lesson"> | string | null
+    description?: StringFilter<"Lesson"> | string
+    videoUrl?: StringFilter<"Lesson"> | string
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
     chapterId?: StringFilter<"Lesson"> | string
@@ -10212,8 +10212,8 @@ export namespace Prisma {
   export type LessonOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
-    description?: SortOrderInput | SortOrder
-    videoUrl?: SortOrderInput | SortOrder
+    description?: SortOrder
+    videoUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     chapterId?: SortOrder
@@ -10228,8 +10228,8 @@ export namespace Prisma {
     NOT?: LessonScalarWhereWithAggregatesInput | LessonScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Lesson"> | string
     title?: StringWithAggregatesFilter<"Lesson"> | string
-    description?: StringNullableWithAggregatesFilter<"Lesson"> | string | null
-    videoUrl?: StringNullableWithAggregatesFilter<"Lesson"> | string | null
+    description?: StringWithAggregatesFilter<"Lesson"> | string
+    videoUrl?: StringWithAggregatesFilter<"Lesson"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Lesson"> | Date | string
     chapterId?: StringWithAggregatesFilter<"Lesson"> | string
@@ -10786,8 +10786,8 @@ export namespace Prisma {
   export type LessonCreateInput = {
     id?: string
     title: string
-    description?: string | null
-    videoUrl?: string | null
+    description: string
+    videoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
     Chapter: ChapterCreateNestedOneWithoutLessonInput
@@ -10796,8 +10796,8 @@ export namespace Prisma {
   export type LessonUncheckedCreateInput = {
     id?: string
     title: string
-    description?: string | null
-    videoUrl?: string | null
+    description: string
+    videoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
     chapterId: string
@@ -10806,8 +10806,8 @@ export namespace Prisma {
   export type LessonUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Chapter?: ChapterUpdateOneRequiredWithoutLessonNestedInput
@@ -10816,8 +10816,8 @@ export namespace Prisma {
   export type LessonUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chapterId?: StringFieldUpdateOperationsInput | string
@@ -10826,8 +10826,8 @@ export namespace Prisma {
   export type LessonCreateManyInput = {
     id?: string
     title: string
-    description?: string | null
-    videoUrl?: string | null
+    description: string
+    videoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
     chapterId: string
@@ -10836,8 +10836,8 @@ export namespace Prisma {
   export type LessonUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10845,8 +10845,8 @@ export namespace Prisma {
   export type LessonUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chapterId?: StringFieldUpdateOperationsInput | string
@@ -12417,8 +12417,8 @@ export namespace Prisma {
   export type LessonCreateWithoutChapterInput = {
     id?: string
     title: string
-    description?: string | null
-    videoUrl?: string | null
+    description: string
+    videoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12426,8 +12426,8 @@ export namespace Prisma {
   export type LessonUncheckedCreateWithoutChapterInput = {
     id?: string
     title: string
-    description?: string | null
-    videoUrl?: string | null
+    description: string
+    videoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12507,8 +12507,8 @@ export namespace Prisma {
     NOT?: LessonScalarWhereInput | LessonScalarWhereInput[]
     id?: StringFilter<"Lesson"> | string
     title?: StringFilter<"Lesson"> | string
-    description?: StringNullableFilter<"Lesson"> | string | null
-    videoUrl?: StringNullableFilter<"Lesson"> | string | null
+    description?: StringFilter<"Lesson"> | string
+    videoUrl?: StringFilter<"Lesson"> | string
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
     chapterId?: StringFilter<"Lesson"> | string
@@ -12769,8 +12769,8 @@ export namespace Prisma {
   export type LessonCreateManyChapterInput = {
     id?: string
     title: string
-    description?: string | null
-    videoUrl?: string | null
+    description: string
+    videoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12778,8 +12778,8 @@ export namespace Prisma {
   export type LessonUpdateWithoutChapterInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12787,8 +12787,8 @@ export namespace Prisma {
   export type LessonUncheckedUpdateWithoutChapterInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12796,8 +12796,8 @@ export namespace Prisma {
   export type LessonUncheckedUpdateManyWithoutChapterInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: StringFieldUpdateOperationsInput | string
+    videoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
