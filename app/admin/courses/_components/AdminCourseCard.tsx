@@ -22,17 +22,13 @@ import {
 import { tryCatch } from "@/hooks/try-catch";
 import { deleteCourse } from "../course-delete-action";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface AdminCourseCardProps {
   data: AdminCourseType;
-  onDelete?: (id: string) => void;
-  onEdit?: (id: string) => void;
 }
 
-const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
-  data,
-  onDelete,
-}) => {
+const AdminCourseCard: React.FC<AdminCourseCardProps> = ({ data }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -214,13 +210,12 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={handleEditClick}
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-5 rounded-lg font-bold flex items-center justify-center shadow-md transition-all duration-300 ease-in-out transform hover:scale-105"
-        >
-          Preview Course
-          <Eye className=" mx-3" />
-        </button>
+        <Link href={`/admin/course/${data.id}`}>
+          <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-5 rounded-lg font-bold flex items-center justify-center shadow-md transition-all duration-300 ease-in-out transform hover:scale-105">
+            Preview Course
+            <Eye className=" mx-3" />
+          </button>
+        </Link>
       </CardContent>
     </Card>
   );

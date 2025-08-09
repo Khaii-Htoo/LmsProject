@@ -78,6 +78,9 @@ const CreateNewLesson = ({
       if (data.status === "success") {
         toast.success(data.message);
         form.reset();
+        setVideoUrl("");
+        setContent("");
+
         router.push(`/admin/courses/${courseId}/edit`);
         setOpen(false);
       } else {
