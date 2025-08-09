@@ -122,13 +122,13 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
           alt={data.title}
           layout="fill"
           objectFit="cover"
-          className="transition-transform h-full duration-300 ease-out"
+          className="transition-transform h-full duration-300 ease-out "
           priority
         />
       </div>
 
       {/* Card Content - Always Visible */}
-      <CardContent className="p-5 space-y-4 bg-white dark:bg-gray-800">
+      <CardContent className="p-5 pt-0 space-y-4">
         <div className="flex justify-between items-center mb-3">
           {" "}
           {/* Added margin-bottom */}
@@ -168,7 +168,7 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 line-clamp-1">
           {data.title}
         </h3>
 

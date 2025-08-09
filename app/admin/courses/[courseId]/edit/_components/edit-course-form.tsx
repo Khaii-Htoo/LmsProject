@@ -32,7 +32,7 @@ import { redirect, useRouter } from "next/navigation";
 import { FetchedCourseData } from "../page";
 import Editor from "@/components/adminsidebar/rich-editor";
 import { tryCatch } from "@/hooks/try-catch";
-import { updateCourse } from "../edit-course-action";
+import { updateCourse } from "../action/edit-course-action";
 import { toast } from "sonner";
 interface CourseFormData extends z.infer<typeof courseCreateSchema> {}
 interface EditCourseFormProps {

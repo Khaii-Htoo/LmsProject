@@ -4,9 +4,10 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
   AlertDialogOverlay,
+  AlertDialogDescription,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,55 +22,61 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader, Plus } from "lucide-react";
+import { Loader, Pen } from "lucide-react";
 import React, { useTransition, useEffect, useState } from "react";
 import { lessonCreateSchema, lessonSchemaType } from "@/lib/zod-schems";
-import { AlertDialogDescription } from "@radix-ui/react-alert-dialog";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
-import YouTubeUpload from "./youtube-upload";
-import { createLesson } from "../action/lesson-action";
-import { redirect, useRouter } from "next/navigation";
-import Editor from "@/components/adminsidebar/rich-editor";
 
-const CreateNewLesson = ({
-  chapterId,
-  courseId,
-}: {
-  chapterId: string;
+import { useRouter } from "next/navigation";
+import Editor from "@/components/adminsidebar/rich-editor";
+import { updateLesson } from "../action/lesson-action";
+interface EditLessonFormProps {
+  initialLessonData: lessonSchemaType & { id: string };
   courseId: string;
-}) => {
+  chapterId: string;
+}
+
+const EditLesson = ({
+  initialLessonData,
+  courseId,
+  chapterId,
+}: EditLessonFormProps) => {
   const [pendingTransition, startTransition] = useTransition();
-  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
-  const [videoUrl, setVideoUrl] = useState("");
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
   const form = useForm<lessonSchemaType>({
     resolver: zodResolver(lessonCreateSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      videoUrl: "",
-      chapterId: chapterId,
+      title: initialLessonData.title || "",
+      description: initialLessonData.description || "",
+      videoUrl: initialLessonData.videoUrl || "",
+      chapterId: initialLessonData.chapterId || chapterId,
     },
   });
-  const [content, setContent] = useState(form.getValues("description"));
 
+  const [content, setContent] = useState(initialLessonData.description || "");
   useEffect(() => {
     form.setValue("description", content);
-  }, [content, setContent]);
+  }, [content, form]);
 
   useEffect(() => {
-    form.setValue("chapterId", chapterId);
-  }, [chapterId, form]);
+    if (initialLessonData.chapterId) {
+      form.setValue("chapterId", initialLessonData.chapterId);
+    } else {
+      form.setValue("chapterId", chapterId);
+    }
+  }, [chapterId, form, initialLessonData.chapterId]);
 
   useEffect(() => {
-    form.setValue("videoUrl", videoUrl);
-  }, [videoUrl, setVideoUrl]);
-
+    form.setValue("videoUrl", initialLessonData.videoUrl || "");
+  }, [initialLessonData.videoUrl, form]);
   async function onSubmit(values: lessonSchemaType) {
     startTransition(async () => {
-      const { data, error } = await tryCatch(createLesson(values));
+      const { data, error } = await tryCatch(
+        updateLesson(initialLessonData.id, values)
+      );
       if (error) {
         toast.error("An unexpected error occured. Please try again");
         return;
@@ -89,22 +96,17 @@ const CreateNewLesson = ({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button
-          variant={"outline"}
-          onPointerDown={(e: any) => e.stopPropagation()}
-        >
-          <Plus size={16} className="mr-2" /> New Lesson
+        <Button variant={"outline"} className=" mr-2">
+          <Pen size={16} className=" cursor-pointer hover:text-red-500 " />
         </Button>
       </AlertDialogTrigger>
-      {/* <--- Added AlertDialogOverlay */}
       <AlertDialogOverlay />
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Add New Lesson</AlertDialogTitle>
+          {" "}
+          <AlertDialogTitle>Edit Your Lesson</AlertDialogTitle>
         </AlertDialogHeader>
-        <AlertDialogDescription>
-          Fill in the details for your new lesson.
-        </AlertDialogDescription>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -119,8 +121,8 @@ const CreateNewLesson = ({
                   <FormMessage />
                 </FormItem>
               )}
-            />{" "}
-            <YouTubeUpload videoUrl={videoUrl} setVideoUrl={setVideoUrl} />
+            />
+
             <FormField
               control={form.control}
               name="description"
@@ -129,6 +131,7 @@ const CreateNewLesson = ({
                   <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
                     <div className="w-full">
+                      {/* Editor now initializes with content from initialLessonData */}
                       <Editor value={content} onChange={setContent} />
                     </div>
                   </FormControl>
@@ -157,12 +160,12 @@ const CreateNewLesson = ({
               </AlertDialogCancel>
               <Button
                 type="submit"
-                disabled={pendingTransition || isUploadingVideo}
+                disabled={pendingTransition} // isUploadingVideo is removed
               >
                 {pendingTransition ? (
                   <Loader size={16} className="animate-spin" />
                 ) : (
-                  "Create Lesson"
+                  "Save Changes" // Changed button text
                 )}
               </Button>
             </AlertDialogFooter>
@@ -173,4 +176,4 @@ const CreateNewLesson = ({
   );
 };
 
-export default CreateNewLesson;
+export default EditLesson;

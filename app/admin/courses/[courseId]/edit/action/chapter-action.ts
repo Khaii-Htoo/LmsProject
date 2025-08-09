@@ -19,7 +19,7 @@ const aj = arcjet
     fixedWindow({
       mode: "LIVE",
       window: "1m",
-      max: 5,
+      max: 30,
     })
   );
 
@@ -100,7 +100,6 @@ export const createChapter = async (
     };
   }
 };
-
 // Get Chapters with Lessons
 // =============================================>
 export const getChaptersWithLessons = async (
@@ -173,17 +172,10 @@ export const deleteChapter = async (
     });
 
     if (decision.isDenied()) {
-      if (decision.reason.isRateLimit()) {
-        return {
-          status: "error",
-          message: "Failed to delete chapter: rate limit exceeded.",
-        };
-      } else {
-        return {
-          status: "error",
-          message: "Bot detected!",
-        };
-      }
+      return {
+        status: "error",
+        message: "Bot detected!",
+      };
     }
 
     const existingChapter = await prisma.chapter.findUnique({
@@ -197,6 +189,14 @@ export const deleteChapter = async (
       };
     }
 
+    // First, delete all related lessons
+    await prisma.lesson.deleteMany({
+      where: {
+        chapterId: chapterId,
+      },
+    });
+
+    // Then, delete the chapter itself
     await prisma.chapter.delete({
       where: {
         id: chapterId,
@@ -205,7 +205,7 @@ export const deleteChapter = async (
 
     return {
       status: "success",
-      message: "Chapter deleted successfully.",
+      message: "Chapter and related lessons deleted successfully.",
     };
   } catch (error) {
     console.error("Error deleting chapter:", error);

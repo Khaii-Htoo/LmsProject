@@ -36,7 +36,8 @@ const YouTubeUpload = ({ videoUrl, setVideoUrl }: PropsType) => {
       formData.append("description", videoDescription);
 
       try {
-        const response = await axios.post("/api/upload-youtube", formData, {
+        const url = "/api/upload-tigris"; //api/upload-youtube
+        const response = await axios.post(url, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -70,39 +71,69 @@ const YouTubeUpload = ({ videoUrl, setVideoUrl }: PropsType) => {
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto p-6 border-2 border-dashed rounded-lg bg-gray-50 dark:bg-zinc-800 dark:text-gray-100 text-gray-700"
+      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto p-8 rounded-2xl bg-white dark:bg-gray-900 shadow-lg transition-colors duration-300"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       {/* Dropzone */}
-      <div
-        {...getRootProps()}
-        className={`w-full p-8 text-center border-2 border-dashed dark:border-gray-600 rounded-md cursor-pointer bg-gray-50 dark:bg-zinc-800 dark:text-gray-100 text-gray-700 ${
-          isUploading
-            ? "cursor-not-allowed bg-gray-200"
-            : "bg-white hover:bg-gray-100"
-        } ${isDragActive ? "border-blue-500" : "border-gray-300"}`}
-      >
-        <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>Drop the video here ...</p>
-        ) : (
-          <p>Drag & drop a video, or click to select</p>
-        )}
-      </div>
+      {!videoUrl && (
+        <div
+          {...getRootProps()}
+          className={`w-full p-8 text-center rounded-xl cursor-pointer transition-all duration-300 border-2 ${
+            isUploading
+              ? "border-gray-400 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              : isDragActive
+                ? "border-blue-500 bg-blue-50 dark:bg-blue-900 dark:border-blue-600"
+                : "border-gray-300 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-600 text-gray-700 dark:text-gray-200"
+          }`}
+        >
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p className="text-blue-600 dark:text-blue-400 font-medium">
+              Release to drop the video here...
+            </p>
+          ) : (
+            <>
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 48 48"
+                aria-hidden="true"
+              >
+                <path
+                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M36 12l4 4m-4 4v-4"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Drag and drop your video here, or{" "}
+                <span className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                  click to browse
+                </span>
+              </p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                MP4, MOV, AVI, up to 1GB
+              </p>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Progress Bar and Status */}
       {isUploading && (
-        <div className="mt-4 w-full">
-          <div className="h-2 w-full rounded-full bg-gray-200">
+        <div className="mt-6 w-full">
+          <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-blue-500"
+              className="h-full rounded-full bg-blue-500 dark:bg-blue-400"
               style={{ width: `${uploadProgress}%` }}
-              transition={{ duration: 0.1 }}
+              transition={{ duration: 0.3 }}
             />
           </div>
-          <p className="text-center text-sm mt-2">
+          <p className="text-center text-sm mt-2 text-gray-600 dark:text-gray-300">
             Uploading: {uploadProgress}%
           </p>
         </div>
@@ -113,17 +144,17 @@ const YouTubeUpload = ({ videoUrl, setVideoUrl }: PropsType) => {
       )}
 
       {videoUrl && (
-        <div className="mt-4 text-center p-4 bg-green-100 rounded-md">
-          <p className="text-green-700 font-semibold">
+        <div className="mt-6 text-center p-5 bg-green-50 dark:bg-green-900 rounded-xl">
+          <p className="text-green-700 dark:text-green-300 font-semibold">
             Video uploaded successfully!
           </p>
           <a
             href={videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 underline hover:text-blue-800"
+            className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
           >
-            View your video on YouTube
+            View your video
           </a>
         </div>
       )}

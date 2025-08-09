@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 
 export const adminGetCourse = async (id: string) => {
   await requireAdmin();
-
   const data = await prisma.course.findUnique({
     where: { id: id },
     select: {

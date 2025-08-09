@@ -142,3 +142,68 @@ export const deleteLesson = async (lessonId: string): Promise<ApiResponse> => {
     };
   }
 };
+
+// Update Lesson =============================================>
+export const updateLesson = async (
+  id: string,
+  payload: lessonSchemaType
+): Promise<ApiResponse> => {
+  const session = await requireAdmin();
+  if (session.user.role !== "admin") {
+    return redirect("/");
+  }
+
+  try {
+    const req = await request();
+    const decision = await aj.protect(req, {
+      fingerprint: session.user.id,
+    });
+
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "Failed to update lesson: rate limit exceeded.",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Bot detected!",
+        };
+      }
+    }
+
+    const validation = lessonCreateSchema.safeParse(payload);
+    if (!validation.success) {
+      return {
+        status: "error",
+        message: "Invalid lesson data provided.",
+      };
+    }
+
+    const { title, description, videoUrl, chapterId } = validation.data;
+
+    await prisma.lesson.update({
+      where: {
+        id: id,
+      },
+      data: {
+        title,
+        description,
+        videoUrl,
+        chapterId,
+      },
+    });
+
+    return {
+      status: "success",
+      message: "Lesson updated successfully.",
+    };
+  } catch (error) {
+    console.error("Error updating lesson:", error);
+    return {
+      status: "error",
+      message: "Failed to update lesson.",
+    };
+  }
+};

@@ -2,27 +2,19 @@
 
 import React, { useState, useRef, useEffect, useTransition } from "react";
 import {
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  Active,
-} from "@dnd-kit/core";
-import {
   SortableContext,
   useSortable,
-  arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  GripVertical,
   Trash2,
   ChevronDown,
   ChevronRight,
   Book,
   TvMinimalPlay,
   LoaderIcon,
+  Pen,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import CreateNewChapter from "./create-new-chapter";
@@ -39,21 +31,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { tryCatch } from "@/hooks/try-catch";
-import { deleteLesson } from "../lesson-action";
+import { deleteLesson } from "../action/lesson-action";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
-
-// Helper function to find the chapter that a lesson belongs to
-function findChapterByLessonId(
-  chapters: ChapterWithLessonsType[],
-  lessonId: string
-) {
-  return chapters.find((chapter) =>
-    chapter.lesson.some((lesson: LessonType) => lesson.id === lessonId)
-  );
-}
+import { redirect, useRouter } from "next/navigation";
+import { deleteChapter } from "../action/chapter-action";
+import { Button } from "@/components/ui/button";
+import EditLesson from "./edit-lesson";
 
 // === LESSON LIST COMPONENT ===
 function LessonList({
@@ -85,7 +69,12 @@ function LessonList({
         strategy={verticalListSortingStrategy}
       >
         {chapter.lesson.map((lesson) => (
-          <SortableLesson key={lesson.id} lesson={lesson} />
+          <SortableLesson
+            key={lesson.id}
+            lesson={lesson}
+            courseId={courseId}
+            chaperId={chapter.id}
+          />
         ))}
       </SortableContext>
       <CreateNewLesson chapterId={chapter.id} courseId={courseId} />
@@ -94,7 +83,13 @@ function LessonList({
 }
 
 // === SORTABLE LESSON COMPONENT ===
-function SortableLesson({ lesson }: { lesson: LessonType }) {
+
+type LessonProps = {
+  lesson: LessonType;
+  courseId: string;
+  chaperId: string;
+};
+function SortableLesson({ lesson, courseId, chaperId }: LessonProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: lesson.id });
 
@@ -137,10 +132,25 @@ function SortableLesson({ lesson }: { lesson: LessonType }) {
         <TvMinimalPlay size={20} />
       </div>
       <div className="flex-grow ml-2">{lesson.title}</div>
-
+      <div className=" flex items-center">
+        {/* eidt */}
+        <EditLesson
+          initialLessonData={{
+            ...lesson,
+            description: lesson.description ?? "",
+            videoUrl: lesson.videoUrl ?? "",
+            id: lesson.id,
+          }}
+          chapterId={chaperId}
+          courseId={courseId}
+        />
+      </div>
+      {/* delete */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Trash2 size={16} className=" cursor-pointer hover:text-red-500 " />
+          <Button variant={"outline"}>
+            <Trash2 size={16} className=" cursor-pointer hover:text-red-500 " />
+          </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -175,7 +185,7 @@ function SortableChapter({
   courseId: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: chapter.id }); // Use chapter.id instead of chapterId
+    useSortable({ id: chapter.id });
 
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -183,7 +193,27 @@ function SortableChapter({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const [open, setOpen] = useState(false);
+  const [pendingTransition, startTransition] = useTransition();
+  const router = useRouter();
+  const handleDeleteChapter = async (id: string) => {
+    startTransition(async () => {
+      const { data: response, error } = await tryCatch(deleteChapter(id));
+      if (error) {
+        toast.error("An unexpected error occured. Please try again");
+        return;
+      }
 
+      if (response.status === "success") {
+        toast.success(response.message);
+
+        router.push(`/admin/courses/${courseId}/edit`);
+        setOpen(false);
+      } else {
+        toast.error(response.message);
+      }
+    });
+  };
   return (
     <div
       ref={setNodeRef}
@@ -208,12 +238,34 @@ function SortableChapter({
             <ChevronRight className="ml-2" size={16} />
           )}
         </button>
-        <button
-          className="text-zinc-500 hover:text-red-500 p-1 rounded"
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <Trash2 size={16} />
-        </button>
+        <AlertDialog open={open} onOpenChange={setOpen}>
+          <AlertDialogTrigger asChild>
+            <Trash2 size={16} className=" cursor-pointer hover:text-red-500 " />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setOpen(false)}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => handleDeleteChapter(chapter.id)}
+              >
+                {pendingTransition ? (
+                  <LoaderIcon className=" animate-spin" />
+                ) : (
+                  "Continue"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <LessonList
         chapter={chapter}
@@ -232,122 +284,12 @@ export default function CourseStructure({
   chapters: ChapterWithLessonsType[];
 }) {
   const [chapters, setChapters] = useState(initialChapters);
-  const [activeItem, setActiveItem] = useState<Active | null>(null);
-  const [activeChapter, setActiveChapter] =
-    useState<ChapterWithLessonsType | null>(null);
-  const [activeLesson, setActiveLesson] = useState<LessonType | null>(null);
+  useState<ChapterWithLessonsType | null>(null);
 
   // Sync state if the initial prop changes from the parent
   useEffect(() => {
     setChapters(initialChapters);
   }, [initialChapters]);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor)
-  );
-
-  const handleDragStart = (event: { active: Active }) => {
-    const { active } = event;
-    setActiveItem(active);
-
-    // Find and set the active chapter or lesson for the DragOverlay
-    const isChapter = chapters.some((c) => c.id === active.id);
-    if (isChapter) {
-      setActiveChapter(chapters.find((c) => c.id === active.id) || null);
-      setActiveLesson(null);
-    } else {
-      const chapter = findChapterByLessonId(chapters, active.id as string);
-      const lesson = chapter?.lesson.find((l) => l.id === active.id);
-      setActiveLesson(lesson || null);
-      setActiveChapter(null);
-    }
-  };
-
-  const handleDragEnd = (event: { active: Active; over: Active | null }) => {
-    const { active, over } = event;
-
-    if (!over || active.id === over.id) {
-      setActiveItem(null);
-      return;
-    }
-
-    const isDraggingChapter = chapters.some((c) => c.id === active.id);
-
-    // --- CASE 1: Reordering Chapters ---
-    if (isDraggingChapter) {
-      const oldIndex = chapters.findIndex((c) => c.id === active.id);
-      const newIndex = chapters.findIndex((c) => c.id === over.id);
-      if (oldIndex !== -1 && newIndex !== -1) {
-        setChapters((prev) => arrayMove(prev, oldIndex, newIndex));
-      }
-    }
-
-    // --- CASE 2: Reordering Lessons ---
-    else {
-      const activeChapter = findChapterByLessonId(
-        chapters,
-        active.id as string
-      );
-      const overChapter = findChapterByLessonId(chapters, over.id as string);
-
-      if (!activeChapter || !overChapter) return;
-
-      // Reordering within the same chapter
-      if (activeChapter.id === overChapter.id) {
-        setChapters((prev) =>
-          prev.map((chapter) => {
-            if (chapter.id === activeChapter.id) {
-              const oldIndex = chapter.lesson.findIndex(
-                (l) => l.id === active.id
-              );
-              const newIndex = chapter.lesson.findIndex(
-                (l) => l.id === over.id
-              );
-              return {
-                ...chapter,
-                lesson: arrayMove(chapter.lesson, oldIndex, newIndex),
-              };
-            }
-            return chapter;
-          })
-        );
-      } else {
-        // Moving a lesson to a different chapter
-        setChapters((prev) => {
-          const newChapters = [...prev];
-          const activeChapterIndex = newChapters.findIndex(
-            (c) => c.id === activeChapter.id
-          );
-          const overChapterIndex = newChapters.findIndex(
-            (c) => c.id === overChapter.id
-          );
-
-          const activeLessonIndex = activeChapter.lesson.findIndex(
-            (l) => l.id === active.id
-          );
-          const [movedLesson] = newChapters[activeChapterIndex].lesson.splice(
-            activeLessonIndex,
-            1
-          );
-
-          const overLessonIndex = overChapter.lesson.findIndex(
-            (l) => l.id === over.id
-          );
-          newChapters[overChapterIndex].lesson.splice(
-            overLessonIndex,
-            0,
-            movedLesson
-          );
-
-          return newChapters;
-        });
-      }
-    }
-    setActiveItem(null);
-    setActiveChapter(null);
-    setActiveLesson(null);
-  };
 
   return (
     <Card>
@@ -371,24 +313,6 @@ export default function CourseStructure({
           </SortableContext>
         </CardContent>
       </div>
-
-      {activeChapter ? (
-        <div className="bg-white dark:bg-zinc-900 rounded-md p-2 my-2 shadow-md opacity-80 border cursor-grab">
-          <div className="flex items-center">
-            <GripVertical size={20} className="text-zinc-500" />
-            <div className="flex-grow font-semibold ml-2">
-              {activeChapter.title}
-            </div>
-          </div>
-        </div>
-      ) : activeLesson ? (
-        <div className="bg-gray-100 dark:bg-zinc-800 rounded-md p-2 my-1 shadow-sm opacity-80 border">
-          <div className="flex items-center">
-            <GripVertical size={20} className="text-zinc-500" />
-            <div className="flex-grow ml-2">{activeLesson.title}</div>
-          </div>
-        </div>
-      ) : null}
     </Card>
   );
 }

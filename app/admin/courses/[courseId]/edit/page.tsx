@@ -1,11 +1,13 @@
 import { adminGetCourse } from "@/app/data/admin/admin-get-course";
-import { ChevronsLeft, Link } from "lucide-react";
+import { ChevronsLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import EditCourseForm from "./_components/edit-course-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CourseStructure from "./_components/course-structure";
-import { getChaptersWithLessons } from "./chapter-action";
+import { getChaptersWithLessons } from "./action/chapter-action";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 export interface FetchedCourseData {
   id: string;
   title: string;
@@ -39,7 +41,7 @@ const EditCoursePage = async ({
 
   const chapters = await getChaptersWithLessons(courseId);
 
-  if (error || !courseData) {
+  if (error) {
     return (
       <div className="p-8 text-center text-red-500">
         <h1>Error</h1>
@@ -56,13 +58,11 @@ const EditCoursePage = async ({
       <div className="flex items-center space-x-3 mb-5">
         <Link
           href={"/admin/courses"}
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "inline-flex items-center justify-center"
-          )}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           <ChevronsLeft />
         </Link>
+
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Edit Course
         </h1>
@@ -75,7 +75,7 @@ const EditCoursePage = async ({
           <TabsTrigger value="chapter-lesson">Chapter & Lesson</TabsTrigger>
         </TabsList>
         <TabsContent value="course-information">
-          <EditCourseForm courseData={courseData} />
+          <EditCourseForm courseData={courseData!} />
         </TabsContent>
         <TabsContent value="chapter-lesson">
           {!Array.isArray(chapters) ? (

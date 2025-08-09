@@ -1,6 +1,5 @@
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
@@ -14,7 +13,6 @@ import { z } from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,23 +21,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader, Plus } from "lucide-react";
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { chapterCreateSchema } from "@/lib/zod-schems";
 import { AlertDialogDescription } from "@radix-ui/react-alert-dialog";
 import { tryCatch } from "@/hooks/try-catch";
-import { createChapter } from "../chapter-action";
+import { createChapter } from "../action/chapter-action";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const CreateNewChapter = ({ courseId }: { courseId: string }) => {
   const [pendingTransition, startTransition] = useTransition();
+  const router = useRouter();
   const form = useForm<z.infer<typeof chapterCreateSchema>>({
     resolver: zodResolver(chapterCreateSchema),
     defaultValues: {
       title: "",
     },
   });
-
+  const [open, setOpen] = useState(false);
   function onSubmit(values: z.infer<typeof chapterCreateSchema>) {
     startTransition(async () => {
       const { data, error } = await tryCatch(createChapter(values, courseId));
@@ -51,14 +50,15 @@ const CreateNewChapter = ({ courseId }: { courseId: string }) => {
       if (data.status === "success") {
         toast.success(data.message);
         form.reset();
-        redirect(`/admin/courses/${courseId}/edit`);
+        router.push(`/admin/courses/${courseId}/edit`);
+        setOpen(false);
       } else {
         toast.error(data.message);
       }
     });
   }
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button variant={"outline"}>
           <Plus size={16} className="mr-2" /> Create Chapter
@@ -85,7 +85,12 @@ const CreateNewChapter = ({ courseId }: { courseId: string }) => {
               )}
             />
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => form.reset()}>
+              <AlertDialogCancel
+                onClick={() => {
+                  form.reset();
+                  setOpen(false);
+                }}
+              >
                 Cancel
               </AlertDialogCancel>
               <Button disabled={pendingTransition}>
