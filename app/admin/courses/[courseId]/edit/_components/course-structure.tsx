@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useTransition } from "react";
 import {
   KeyboardSensor,
   PointerSensor,
@@ -21,13 +21,29 @@ import {
   ChevronDown,
   ChevronRight,
   Book,
-  GraduationCap,
   TvMinimalPlay,
+  LoaderIcon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import CreateNewChapter from "./create-new-chapter";
 import CreateNewLesson from "./create-new-lesson";
-import { ChapterWithLessonsType, LessonType } from "@/type"; // Assuming your types are in @/types
+import { ChapterWithLessonsType, LessonType } from "@/type";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { tryCatch } from "@/hooks/try-catch";
+import { deleteLesson } from "../lesson-action";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 // Helper function to find the chapter that a lesson belongs to
 function findChapterByLessonId(
@@ -82,9 +98,29 @@ function SortableLesson({ lesson }: { lesson: LessonType }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: lesson.id });
 
+  const [pendingTransition, startTransition] = useTransition();
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  const handleDeleteLesson = async (id: string) => {
+    startTransition(async () => {
+      const { data: response, error } = await tryCatch(deleteLesson(id));
+      if (error) {
+        toast.error("An unexpected error occured. Please try again");
+        return;
+      }
+
+      if (response.status === "success") {
+        toast.success(response.message);
+
+        redirect("/admin/courses");
+      } else {
+        toast.error(response.message);
+      }
+    });
   };
 
   return (
@@ -101,12 +137,31 @@ function SortableLesson({ lesson }: { lesson: LessonType }) {
         <TvMinimalPlay size={20} />
       </div>
       <div className="flex-grow ml-2">{lesson.title}</div>
-      <button
-        className="text-zinc-500 hover:text-red-500 p-1 rounded"
-        onPointerDown={(e) => e.stopPropagation()}
-      >
-        <Trash2 size={16} />
-      </button>
+
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Trash2 size={16} className=" cursor-pointer hover:text-red-500 " />
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleDeleteLesson(lesson.id)}>
+              {pendingTransition ? (
+                <LoaderIcon className=" animate-spin" />
+              ) : (
+                "Continue"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -169,7 +224,6 @@ function SortableChapter({
   );
 }
 
-// === MAIN COURSE STRUCTURE COMPONENT ===
 export default function CourseStructure({
   courseId,
   chapters: initialChapters, // Rename prop for clarity

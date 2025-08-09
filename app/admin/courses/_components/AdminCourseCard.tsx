@@ -199,8 +199,7 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({
                       Are you absolutely sure?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      your account and remove your data from our servers.
+                      You won't be able to revert this!
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

@@ -24,7 +24,6 @@ const EditCoursePage = async ({
   params: Promise<{ courseId: string }>;
 }) => {
   const { courseId } = await params;
-
   let courseData: FetchedCourseData | null = null;
   let error: string | null = null;
 

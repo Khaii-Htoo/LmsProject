@@ -101,7 +101,7 @@ export const createChapter = async (
   }
 };
 
-// Get Chapters with Lessons Server Action
+// Get Chapters with Lessons
 // =============================================>
 export const getChaptersWithLessons = async (
   courseId: string
@@ -154,6 +154,64 @@ export const getChaptersWithLessons = async (
     return {
       status: "error",
       message: "Failed to fetch chapters and lessons.",
+    };
+  }
+};
+
+export const deleteChapter = async (
+  chapterId: string
+): Promise<ApiResponse> => {
+  const session = await requireAdmin();
+  if (session.user.role !== "admin") {
+    return redirect("/");
+  }
+
+  try {
+    const req = await request();
+    const decision = await aj.protect(req, {
+      fingerprint: session.user.id,
+    });
+
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "Failed to delete chapter: rate limit exceeded.",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Bot detected!",
+        };
+      }
+    }
+
+    const existingChapter = await prisma.chapter.findUnique({
+      where: { id: chapterId },
+    });
+
+    if (!existingChapter) {
+      return {
+        status: "error",
+        message: "Chapter not found.",
+      };
+    }
+
+    await prisma.chapter.delete({
+      where: {
+        id: chapterId,
+      },
+    });
+
+    return {
+      status: "success",
+      message: "Chapter deleted successfully.",
+    };
+  } catch (error) {
+    console.error("Error deleting chapter:", error);
+    return {
+      status: "error",
+      message: "Failed to delete chapter.",
     };
   }
 };

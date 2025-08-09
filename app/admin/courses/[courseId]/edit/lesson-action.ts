@@ -23,8 +23,7 @@ const aj = arcjet
     })
   );
 
-// Create Lesson Server Action
-// =============================================>
+// Create Lesson =============================================>
 export const createLesson = async (
   payload: lessonSchemaType
 ): Promise<ApiResponse> => {
@@ -82,6 +81,64 @@ export const createLesson = async (
     return {
       status: "error",
       message: "Failed to create lesson.",
+    };
+  }
+};
+
+// Delete Lesson =============================================>
+export const deleteLesson = async (lessonId: string): Promise<ApiResponse> => {
+  const session = await requireAdmin();
+  if (session.user.role !== "admin") {
+    return redirect("/");
+  }
+
+  try {
+    const req = await request();
+    const decision = await aj.protect(req, {
+      fingerprint: session.user.id,
+    });
+
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message:
+            "Failed to delete lesson: rate limit exceeded. Please try again later.",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Bot activity detected. Deletion denied.",
+        };
+      }
+    }
+
+    const existingLesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+    });
+
+    if (!existingLesson) {
+      return {
+        status: "error",
+        message: "Lesson not found or already deleted.",
+      };
+    }
+
+    await prisma.lesson.delete({
+      where: {
+        id: lessonId,
+      },
+    });
+
+    return {
+      status: "success",
+      message: "Lesson deleted successfully.",
+    };
+  } catch (error) {
+    console.error("Error deleting lesson:", error);
+    return {
+      status: "error",
+      message: "Failed to delete lesson. An unexpected error occurred.",
     };
   }
 };
