@@ -126,7 +126,7 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({ data }) => {
                 d="M3 15a4 4 0 008 0c0 1.1.9 2 2 2s2-0.9 2-2a4 4 0 008 0c0-4.4-4.5-8-10-8s-10 3.6-10 8z"
               ></path>
             </svg>
-            <span>{data.level}</span>
+            <span>{data.level?.name}</span>
           </div>
         </div>
 
