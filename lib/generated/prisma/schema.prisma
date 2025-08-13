@@ -83,8 +83,10 @@ model Course {
   fileKey     String
   price       Int
   duration    Int
-  level       String
-  category    String
+  levelId     String?
+  level       Level?    @relation(fields: [levelId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
   slug        String    @unique
   status      String
   createdAt   DateTime  @default(now())
@@ -115,4 +117,20 @@ model Lesson {
   updatedAt   DateTime @updatedAt
   Chapter     Chapter  @relation(fields: [chapterId], references: [id])
   chapterId   String
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courses   Course[]
+}
+
+model Level {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courses   Course[]
 }
