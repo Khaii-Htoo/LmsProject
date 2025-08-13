@@ -29,32 +29,7 @@ interface AdminCourseCardProps {
 }
 
 const AdminCourseCard: React.FC<AdminCourseCardProps> = ({ data }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  const [cardRotation, setCardRotation] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    const rotateX = (y / 20) * -1;
-    const rotateY = x / 20;
-
-    setCardRotation({ x: rotateX, y: rotateY });
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setCardRotation({ x: 0, y: 0 });
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
 
   const handleEditClick = (e: React.MouseEvent) => {
     redirect(`/admin/courses/${data.id}/edit`);
@@ -95,21 +70,12 @@ const AdminCourseCard: React.FC<AdminCourseCardProps> = ({ data }) => {
     }
   };
 
-  const card3DStyles = {
-    transform: `perspective(1000px) rotateX(${cardRotation.x}deg) rotateY(${cardRotation.y}deg) scale3d(${isHovered ? 1.02 : 1}, ${isHovered ? 1.02 : 1}, 1)`,
-    transition: "transform 0.3s ease-out",
-  };
-
   return (
     <Card
       ref={cardRef}
       className={cn(
         "relative flex-1 rounded-xl overflow-hidden shadow-lg border-none transition-all duration-500 "
       )}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onMouseEnter={handleMouseEnter}
-      style={card3DStyles}
     >
       {/* Course Image Area */}
       <div className="relative w-full h-56  overflow-hidden bg-gray-200 dark:bg-gray-700">
