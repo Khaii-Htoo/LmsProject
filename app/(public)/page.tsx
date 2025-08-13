@@ -115,8 +115,8 @@ export default function HomePage() {
                   className=" p-7 rounded-lg"
                   gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
                 >
-                  <div className="mb-4 p-3rounded-full inline-block">
-                    {data.icon}
+                  <div className="mb-4  w-full  inline-flex h-10  items-center justify-center rounded-md bg-hero-gradient text-primary-foreground shadow-[var(--shadow-elegant)]">
+                    <data.Icon />
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-center">
                     {data.title}

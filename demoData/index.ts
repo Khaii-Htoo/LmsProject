@@ -1,24 +1,26 @@
+import { Award, BookOpen, Rocket, Users } from "lucide-react";
+
 export const featureKeyData = [
   {
-    title: "Comprehensive Courses",
-    description: "Access a vast library of courses covering diverse subjects.",
-    icon: "",
-  },
-  {
-    title: "Interactive Learning",
-    description: "Engage with dynamic content and hands-on exercises.",
-    icon: "",
-  },
-  {
-    title: "Progress Tracking",
-    description: "Monitor your learning journey with detailed analytics.",
-    icon: "",
-  },
-  {
-    title: "Community Support",
+    title: "Rich Course Builder",
     description:
-      "Connect with peers and instructors for collaborative learning.",
-    icon: "",
+      "Create multimedia lessons, quizzes, and assignments with ease.",
+    Icon: BookOpen,
+  },
+  {
+    title: "Certificates & Progress",
+    description: "Track progress, issue certificates, and motivate learners.",
+    Icon: Award,
+  },
+  {
+    title: "Community & Cohorts",
+    description: "Foster discussions and manage cohorts at scale.",
+    Icon: Users,
+  },
+  {
+    title: "Fast & Secure",
+    description: "Optimized performance with secure, reliable infrastructure.",
+    Icon: Rocket,
   },
 ];
 
