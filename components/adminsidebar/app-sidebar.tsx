@@ -52,16 +52,6 @@ const items = {
       icon: IconListDetails,
     },
     {
-      title: "Categories",
-      url: "/admin/categories",
-      icon: IconDatabase,
-    },
-    {
-      title: "Levels",
-      url: "/admin/levels",
-      icon: IconListDetails,
-    },
-    {
       title: "Analytics",
       url: "#",
       icon: IconChartBar,
